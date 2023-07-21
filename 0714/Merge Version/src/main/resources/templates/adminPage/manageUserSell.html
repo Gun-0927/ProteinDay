@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<body>
+  <!-- 메인 부분 -->
+  <div class="container-fluid " style="margin-top: 40px;" layout:fragment="content">
+    <div class="row gx-0">
+      <div class="row">
+        <div class="col-md-4 text-center h3">
+          유저 관리
+        </div>
+      </div>
+      <div class="col-10">
+        <div class="container">
+
+          <div class="row">
+            <div class="col-12 text-center">
+              <div class="row">
+                <div class="col-6 text-center text-white">
+                  <a th:href="@{/admin/userMgt/0?userState=0}">유저 관리</a>
+                </div>
+                <div class="col-6 text-center">
+                  <a th:href="@{/admin/sellUserMgt}">판매유저 관리</a>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-2  text-center">
+                    <select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                      <option value="1" selected>전체</option>
+                      <option value="2">활동</option>
+                      <option value="3">정지</option>
+                      <option value="4">영구정지</option>
+                    </select>
+                  </div>
+                <div class="col-md-2  text-center">
+                  <select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                    <option value="1" selected>이름</option>
+                    <option value="2">아이디</option>
+                    <option value="3">이메일</option>
+                  </select>
+                </div>
+    
+                <div class="col-md-5  text-center">
+                  <input type="text" class="form-control" placeholder="Username" />
+                </div>
+                <div class="col-md-1  text-center">
+                  <button class="btn btn-outline-secondary">검색</button>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-1 text-center form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                  <label class="form-check-label" for="flexCheckDefault">
+                    전체선택
+                  </label>
+                </div>
+                <div class="col-1 text-center">
+                    유저상태
+                  </div>
+                  <div class="col-1 text-center">
+                    상태변경일
+                  </div>
+                <div class="col-2 text-center">
+                  이름
+                </div>
+                <div class="col-2 text-center">
+                  아이디
+                </div>
+                <div class="col-2 text-center">
+                  이메일
+                </div>
+                <div class="col-1 text-center">
+                    누적 신고수
+                </div>
+                <div class="col-1 text-center">
+                  상품 등록 내역
+                </div>
+                <div class="col-1 text-center">
+                    상품 등록 수
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-1 form-check d-flex align-self-center justify-content-center">
+                  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                  <label class="form-check-label" for="flexCheckDefault">
+                    
+                  </label>
+                </div>
+                <div class="col-1 d-flex align-self-center justify-content-center">
+                  정지
+                </div>
+                <div class="col-1 d-flex align-self-center justify-content-center">
+                    날짜
+                  </div>
+                <div class="col-2 d-flex align-self-center justify-content-center">
+                  이름
+                </div>
+                <div class="col-2 d-flex align-self-center justify-content-center">
+                  아이디
+                </div>
+                <div class="col-2 d-flex align-self-center justify-content-center">
+                  이메일
+                </div>
+                <div class="col-1 d-flex align-self-center justify-content-center">
+                  <a href="#">n회</a>
+                </div>
+                <div class="col-1 d-flex align-self-center justify-content-center">
+                  <button class="btn btn-outline-secondary">상품등록내역</button>
+                </div>
+                <div class="col-1 d-flex align-self-center justify-content-center">
+                    상품등록수
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-1 form-check d-flex align-self-center justify-content-center">
+                  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                  <label class="form-check-label" for="flexCheckDefault">
+                    
+                  </label>
+                </div>
+                <div class="col-1 d-flex align-self-center justify-content-center">
+                  활동
+                </div>
+                <div class="col-1 d-flex align-self-center justify-content-center">
+                    날짜
+                  </div>
+                <div class="col-2 d-flex align-self-center justify-content-center">
+                  이름
+                </div>
+                <div class="col-2 d-flex align-self-center justify-content-center">
+                  아이디
+                </div>
+                <div class="col-2 d-flex align-self-center justify-content-center">
+                  이메일
+                </div>
+                <div class="col-1 d-flex align-self-center justify-content-center">
+                  <a href="#">n회</a>
+                </div>
+                <div class="col-1 d-flex align-self-center justify-content-center">
+                  <button class="btn btn-outline-secondary">상품등록내역</button>
+                </div>
+                <div class="col-1 d-flex align-self-center justify-content-center">
+                    상품등록수
+                </div>
+              </div>
+
+
+              
+            </div>
+          </div>
+
+
+
+          <div class="row">
+            <div class="col-md-1 text-center">
+              <button class="btn btn-outline-secondary" onclick="window.location.href = 'write.html'">활동</button>
+            </div>
+            <div class="col-md-1 text-center">
+              <button class="btn btn-outline-secondary" onclick="window.location.href = 'write.html'">정지</button>
+            </div>
+            <div class="col-md-1 text-center">
+                <button class="btn btn-outline-secondary" onclick="window.location.href = 'write.html'">영구정지</button>
+              </div>
+          </div>
+
+
+
+        </div>
+      </div>
+
+
+
+
+      <!-- 사이드메뉴 부분 -->
+          <div th:replace="/fragments/admin_side"></div>
+
+
+    </div>
+  </div>
+</body>
+
+</html>

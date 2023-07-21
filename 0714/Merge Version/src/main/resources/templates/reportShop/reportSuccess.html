@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+
+<div class="container">
+  <div class="row" style="height: 500px;">
+    <div class="col-12 d-flex align-self-center justify-content-center">
+      신고가 완료되었습니다
+    </div>
+    <div class="col-12 d-flex align-self-center justify-content-center">
+      <button onclick="window.close()">확인</button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

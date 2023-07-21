@@ -1,0 +1,1489 @@
+<html lang="ko" class="" data-backskin-light="" data-backskin-dark=""
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+<head>
+  <style type="text/css" id="alertifyCSS">
+    /*.alertify-logs>*{padding:12px 24px;color:#fff;box-shadow:0 2px 5px 0 rgba(0,0,0,.2);border-radius:1px}*/
+    /*.alertify-logs>*,.alertify-logs>.default{background:rgba(0,0,0,.8)}.alertify-logs>.error{background:rgba(244,67,54,.8)}*/
+    /*.alertify-logs>.success{background:rgba(76,175,80,.9)}.alertify{position:fixed;background-color:rgba(0,0,0,.3);left:0;right:0;top:0;bottom:0;width:100%;height:100%;z-index:1}.alertify.hide{opacity:0;pointer-events:none}*/
+    /*.alertify,.alertify.show{box-sizing:border-box;transition:all .33s cubic-bezier(.25,.8,.25,1)}*/
+    /*.alertify,.alertify *{box-sizing:border-box}.alertify .dialog{padding:12px}.alertify .alert,.alertify .dialog{width:100%;margin:0 auto;position:relative;top:50%;transform:translateY(-50%)}*/
+    /*.alertify .alert>*,.alertify .dialog>*{width:400px;max-width:95%;margin:0 auto;text-align:center;padding:12px;background:#fff;box-shadow:0 2px 4px -1px rgba(0,0,0,.14),0 4px 5px 0 rgba(0,0,0,.098),0 1px 10px 0 rgba(0,0,0,.084)}*/
+    /*.alertify .alert .msg,.alertify .dialog .msg{padding:12px;margin-bottom:12px;margin:0;text-align:left}*/
+    /*.alertify .alert input:not(.form-control),*/
+    /*.alertify .dialog input:not(.form-control){margin-bottom:15px;width:100%;font-size:100%;padding:12px}*/
+    /*.alertify .alert input:not(.form-control):focus,.alertify .dialog input:not(.form-control):focus{outline-offset:-2px}*/
+    /*.alertify .alert nav,.alertify .dialog nav{text-align:right}*/
+    /*.alertify .alert nav button:not(.btn):not(.pure-button):not(.md-button):not(.mdl-button),*/
+    /*.alertify .dialog nav button:not(.btn):not(.pure-button):not(.md-button):not(.mdl-button){background:transparent;box-sizing:border-box;color:rgba(0,0,0,.87);position:relative;outline:0;border:0;display:inline-block;-ms-flex-align:center;-ms-grid-row-align:center;align-items:center;padding:0 6px;margin:6px 8px;line-height:36px;min-height:36px;white-space:nowrap;min-width:88px;text-align:center;text-transform:uppercase;font-size:14px;text-decoration:none;cursor:pointer;border:1px solid transparent;border-radius:2px}*/
+    /*.alertify .alert nav button:not(.btn):not(.pure-button):not(.md-button):not(.mdl-button):active,*/
+    /*.alertify .alert nav button:not(.btn):not(.pure-button):not(.md-button):not(.mdl-button):hover,*/
+    /*.alertify .dialog nav button:not(.btn):not(.pure-button):not(.md-button):not(.mdl-button):active,*/
+    /*.alertify .dialog nav button:not(.btn):not(.pure-button):not(.md-button):not(.mdl-button):hover{background-color:rgba(0,0,0,.05)}*/
+    /*.alertify .alert nav button:not(.btn):not(.pure-button):not(.md-button):not(.mdl-button):focus,*/
+    /*.alertify .dialog nav button:not(.btn):not(.pure-button):not(.md-button):not(.mdl-button):focus{border:1px solid rgba(0,0,0,.1)}*/
+    /*.alertify .alert nav button.btn,*/
+    /*.alertify .dialog nav button.btn{margin:6px 4px}.alertify-logs{position:fixed;z-index:1}.alertify-logs.bottom,.alertify-logs:not(.top){bottom:16px}.alertify-logs.left,.alertify-logs:not(.right){left:16px}*/
+    /*.alertify-logs.left>*,.alertify-logs:not(.right)>*{float:left;transform:translateZ(0);height:auto}*/
+    /*.alertify-logs.left>.show,.alertify-logs:not(.right)>.show{left:0}*/
+    /*.alertify-logs.left>*,.alertify-logs.left>.hide, .alertify-logs:not(.right)> *,*/
+    /*.alertify-logs:not(.right)>.hide{left:-110%}.alertify-logs.right{right:16px}*/
+    /*.alertify-logs.right>*{float:right;transform:translateZ(0)}.alertify-logs.right>.show{right:0;opacity:1}*/
+    /*.alertify-logs.right>*,.alertify-logs.right>.hide{right:-110%;opacity:0}.alertify-logs.top{top:0}*/
+    /*.alertify-logs>*{box-sizing:border-box;transition:all .4s cubic-bezier(.25,.8,.25,1);position:relative;clear:both;backface-visibility:hidden;perspective:1000;max-height:0;margin:0;padding:0;overflow:hidden;opacity:0;pointer-events:none}*/
+    /*.alertify-logs>.show{margin-top:12px;opacity:1;max-height:1000px;padding:12px;pointer-events:auto}*/
+  </style>
+  <meta charset="UTF-8">
+  <title>블루아카이브_list</title>
+  <!-- CSS only -->
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="https://cdn-assets.tgd.kr/css/tgd.layout.min.css?v=b351">
+  <link rel="stylesheet" type="text/css" href="https://cdn-assets.tgd.kr/css/1145f263256c923716d2b8eade2f6689.min.css?v=b351">
+  <style type="text/css">/* 폰트 */
+
+  img[alt="Global Moderator"] {
+    display: none;
+  }
+
+  img[alt="Moderator"] {
+    display: none;
+  }
+  /* 사용자 설정 부분 */
+  :root {
+    --bgColor: #f0f0f0;   /* 배경 색 */
+    --bgFrame: #ffffff;   /* 프레임 배경색 */
+    --mainColor: #9b978c;   /* 메인 컬러 */
+    --mainColor5: #77777755; /* 공지, 인기글 hover */
+    --mainColor3: #77777733; /* 공지, 인기글 */
+    --mainColor2: #77777722; /* 트게더 메뉴, 게시글 hover */
+    --logoWidth: 200px;	 /* 로고 너비 */
+    --before: ""; /* 접속자 수 앞 문구 */
+    --after: "";  /* 접속자 수 뒤 문구 */
+  }
+  /* 다크모드용 색 설정 */
+  html.darkmode:root {
+    --bgColor: #f0f0f0;   /* 배경 색 */
+    --bgFrame: #242424;   /* 프레임 배경색 */
+    --mainColor: #777777;   /* 메인 컬러 */
+    --mainColor5: #77777755; /* 공지, 인기글 hover */
+    --mainColor3: #77777733; /* 공지, 인기글 */
+    --mainColor2: #77777722; /* 트게더 메뉴, 게시글 hover */
+
+    --logoWidth: 200px;	 /* 로고 너비 */
+  }
+
+  /* 모든 항목 focus시 아웃라인 제거 */
+  *:focus { outline: none !important; }
+
+  html {
+    background: var(--bgColor);
+    height: auto;
+  }
+  body { background: transparent; }
+
+  html.darkmode a ,a {
+    color: var(--mainColor);
+    transition: all 0.2s ease 0s;
+  }
+  a:hover,
+  a:focus {
+    color: var(--mainColor) !important;
+  }
+
+
+  /*************** header ***************/
+
+  header {
+    padding: 0.5em 0 0.5em 0;
+  }
+
+
+
+  /* 검색 창 */
+  header #right-search-form>input[type='text'] {
+    border: 2px solid var(--mainColor) !important;
+    transition: 0.2s;
+  }
+
+  header #right-search-form>input[type='text']:hover,
+  header #right-search-form>input[type='text']:focus {
+    transform: scale(1.05);
+    transition: 0.2s;
+  }
+
+  /* 검색 버튼 */
+  header #right-search-form>#right-search-btn {
+    color: var(--mainColor) !important;
+    transition: 0.2s;
+  }
+
+  header #right-search-form>#right-search-btn:hover,
+  header #right-search-form>#right-search-btn:focus {
+    transform: scale(1.25);
+    transition: 0.2s;
+  }
+  /* */
+  header #tgd-home-nav {
+    color: var(--mainColor) !important;
+  }
+
+  /* 상단바 */
+  header #header-bar {
+    margin-bottom: 0.5em;
+  }
+
+  header #header-bar>.row {
+    border: 2px solid var(--mainColor) !important;
+  }
+
+
+  /*************** main ***************/
+
+  /*  메뉴 */
+
+  #main .menu-wrapper > a {
+    padding: 0.35em 0.5em 0.35em 0.5em;
+    letter-spacing: -0.05em;
+  }
+
+  #main .menu-wrapper > a:hover {
+    background-color: var(--mainColor2);
+  }
+
+  #main .menu-wrapper .spacer {
+    background: var(--mainColor) !important;
+    height: 2px;
+  }
+
+  #main .menu-wrapper>.header {
+    background: var(--mainColor) !important;
+  }
+
+  #main .menu-wrapper>a>em,
+  #main .menu-wrapper>a>i.fa.fa-square {
+    color: var(--mainColor) !important;
+  }
+
+  /* 게시글 프레임 */
+  #main #main-content>div.frame {
+    background: transparent !important;
+    border: none !important;
+  }
+
+
+  /*************** board ***************/
+
+  #board-info {
+    margin: 0;
+    height: auto;
+    background: var(--bgFrame);
+    border: 2px solid var(--mainColor) !important;
+    margin-bottom: 0.5em;
+  }
+
+  #board-info h1 {
+    margin-top: 12px;
+    font-size: 28px;
+    border-bottom: 2px solid var(--mainColor) !important;
+    width: calc(100% - 100px); /* 스트리머 게시판 적용시 */
+  }
+
+  #board-info h1>a {
+    transition: 0.2s;
+  }
+
+  #board-info h1>a:hover,
+  #board-info h1>a:focus {
+    color: var(--mainColor) !important;
+    transition: 0.2s;
+  }
+
+  #board-info #board-info-bottom a {
+    color: var(--mainColor) !important;
+    font-size: 14px;
+  }
+
+  #board-info > #board-info-bottom {
+    margin-top: 10px;
+  }
+
+  #board-info>img,
+  #board-info>h1,
+  #board-info>#board-info-bottom {
+    float: left !important;
+  }
+
+  #board-info>img#board-info-profile-img {
+    width: 80px;
+    margin-right: 15px;
+    border: 2px solid var(--mainColor) !important;
+    border-radius: 0;
+    transition: 0.2s;
+  }
+
+  #board-info>img#board-info-profile-img:hover {
+    transform: scale(1.1);
+  }
+
+  #board-info #viewers-area #viewers:before {
+    content: var(--before);
+    cursor: text;
+  }
+
+  #board-info #viewers-area #viewers:after {
+    content: var(--after);
+    cursor: text;
+  }
+
+
+  /*************** article ***************/
+
+  .frame>.frame, #article-list {
+    background: var(--bgFrame);
+    border: 2px solid var(--mainColor) !important;
+  }
+
+  /* 공지 숨기기 버튼 */
+  #article-list #article-option-area {
+    right: 2px;
+    top: 2px;
+  }
+
+  #article-list #article-option-area> #article-option-area-toggle-btn {
+    background: #eaeaea;
+    width: 34px;
+    height: 34px;
+    border: 2px solid;
+    transition: 0.2s ease 0s;
+    line-height: inherit;
+  }
+
+  /* 카테고리 */
+  #article-list #article-list-category  {
+    background: transparent;
+    border: none !important;
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+
+  #article-list #article-list-category>a {
+    background: transparent;
+    color: var(--mainColor) !important;
+    position: relative;
+  }
+
+  #article-list #article-list-category>a::before {
+    top: 0;
+  }
+
+  #article-list #article-list-category>a::after {
+    bottom: 0;
+  }
+
+  #article-list #article-list-category>a::before,
+  #article-list #article-list-category>a::after {
+    height: 2px;
+    width: 100%;
+    background: var(--mainColor) !important;
+    content: "";
+    position: absolute;
+    left: 0px;
+    transform: scaleX(0);
+    transition: 0.3s;
+  }
+
+  html.darkmode #article-list #article-list-category #board-home-link-btn{
+    background-color: transparent;
+  }
+  html.darkmode #article-list #article-list-category>a.active,
+  html.darkmode #article-list #article-list-category>a:hover {
+    background-color: var(--mainColor2) !important;
+  }
+
+  #article-list #article-list-category>a:hover::before,
+  #article-list #article-list-category>a:hover::after {
+    transform: scaleX(1);
+  }
+
+  @keyframes colorChange {
+    0% {
+      background-color: white;
+    }
+    100% {
+      background-color: greenyellow; /* 원하는 색상으로 변경 */
+    }
+  }
+  #article-list-category .nav-link:hover,
+  #article-list-category > a:hover {
+    animation: colorChange 1s forwards; /* 애니메이션 적용 */
+  }
+
+
+
+  /* 게시글 */
+  #article-list>.article-list-row {
+    border: none !important;
+    transition: 0.2s;
+  }
+  html.darkmode #article-list>.article-list-row:hover,
+  html.darkmode #article-list>.article-list-row:focus,
+  #article-list>.article-list-row:hover,
+  #article-list>.article-list-row:focus {
+    /*background-color: var(--mainColor2) !important;*/
+    /*transform: scale(1.01);*/
+    /*transition: 0.2s;*/
+  }
+
+  #article-list>.article-list-row.hot,
+  #article-list>.article-list-row.notice {
+    background-color: var(--mainColor3) !important;
+  }
+
+  html.darkmode #article-list>.article-list-row.hot:hover,
+  html.darkmode #article-list>.article-list-row.hot:focus,
+  html.darkmode #article-list>.article-list-row.notice:hover,
+  html.darkmode #article-list>.article-list-row.notice:focus,
+  #article-list>.article-list-row.hot:hover,
+  #article-list>.article-list-row.hot:focus,
+  #article-list>.article-list-row.notice:hover,
+  #article-list>.article-list-row.notice:focus {
+    background-color: var(--mainColor5) !important;
+  }
+
+  html.darkmode #article-comment a { color: white; }
+
+  #article-list>.article-list-row>.item>.list-header {
+    border-left: none;
+  }
+
+  #article-list>.article-list-row>.item>.list-header>strong {
+    color: black !important;
+  }
+
+  /* 게시글 추천 수 */
+  #article-list>.article-list-row>.item>.list-header>span {
+    background: #928e23 !important;
+  }
+
+  /* 게시글 추천 수 0 */
+  #article-list>.article-list-row>.item>.list-header.v0>span,
+  #article-list>.article-list-row>.item>.list-header.v0>span:hover {
+    color: transparent;
+    background-color: transparent !important;
+  }
+
+  /* 게시글 댓글 수 */
+  #article-list>.article-list-row>.item>.list-title>small.comment-count {
+    color: purple  !important;
+  }
+
+  /* 로그인한 게시글 작성자 */
+  #article-list>.article-list-row>.item>.list-title>.list-writer.logged>span {
+    color: black !important;
+  }
+
+  /* 게시글 검색 창 */
+  #article-list #boardSearchForm .form-control {
+    border-color: black !important;
+  }
+
+  /* 게시글 본문 */
+  #article-info {
+    background: var(--bgFrame);
+    border: 2px solid var(--mainColor);
+    border-bottom: 1px;
+    margin-top: 0.5em;
+  }
+
+  #article-info>h2 {
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #article-info #article-info-writer,
+  #article-content-wrapper>.header>#article-time {
+    margin-left: 8px;
+  }
+
+  #article-content-wrapper>.header>#article-views {
+    margin-right:3px;
+  }
+
+  #article-content-wrapper {
+    padding: 0;
+    background: var(--bgFrame);
+    border: 2px solid var(--mainColor) !important;
+  }
+
+  #article-content-wrapper>.header {
+    border-top: none !important;
+    border-bottom: 2px solid var(--mainColor) !important;
+    background: transparent;
+  }
+
+  #article-content-wrapper #article-content {
+    margin: 0.5em;
+    border: none !important;
+  }
+
+  #article-content-wrapper>.footer {
+    border: none !important;
+    border-top: 2px solid var(--mainColor) !important;
+    background: var(--bgFrame);
+  }
+
+  #article-neighbor-list {
+    border: 2px solid var(--mainColor);
+    background: var(--bgFrame);
+  }
+
+  #article-neighbor-list>div:hover,
+  #article-neighbor-list>div:focus {
+    background: linear-gradient(to right, white, var(--mainColor2), white);
+  }
+
+  #article-neighbor-list>div>a,
+  #article-neighbor-list>div>span.indicator,
+  #article-neighbor-list>div>span.author {
+    color: var(--mainColor) !important;
+  }
+
+  html.darkmode textarea.fr-code { color: white; }
+
+  /* 댓글 */
+  #article-reply-area {
+    padding: 0;
+    background: var(--bgFrame);
+    border: 2px solid var(--mainColor) !important;
+    margin-top: 3px;
+    margin-bottom: 5px;
+  }
+
+  #article-reply-area > .header h5 {
+    color: var(--mainColor) !important;
+  }
+
+  #article-reply-area #reply-real-area .reply.active,
+  #article-reply-area #reply-best-area .reply.active {
+    background-color: var(--mainColor2) !important;
+  }
+
+  #article-reply-area #reply-real-area .reply > .reply-header,
+  #article-reply-area #reply-best-area .reply > .reply-header {
+    padding: 0.3em 0.5em;
+    background: #fcfcfc;
+  }
+
+  #article-reply-area #reply-real-area .reply > .reply-header > .reply-writer.logged,
+  #article-reply-area #reply-best-area .reply > .reply-header > .reply-writer.logged,
+  #article-reply-area #reply-real-area .reply > .reply-header > .reply-menu > *,
+  #article-reply-area #reply-best-area .reply > .reply-header > .reply-menu > *{
+    color: var(--mainColor) !important;
+  }
+
+  .fr-popup,
+  .fr-toolbar.fr-top {
+    border-top: 3px solid var(--mainColor) !important;
+  }
+
+  .fr-toolbar .fr-command.fr-btn,
+  .fr-popup .fr-command.fr-btn {
+    color: var(--mainColor) !important;
+  }
+
+  .fr-toolbar .fr-command.fr-btn.fr-dropdown::after,
+  .fr-popup .fr-command.fr-btn.fr-dropdown::after {
+    border-top: 4px solid var(--mainColor) !important;
+  }
+
+  /* 페이지 */
+  .pagination>li>a,
+  .pagination>li>span,
+  .pagination>li>a:focus,
+  .pagination>li>span:focus {
+    color: var(--mainColor);
+    background: transparent !important;
+    transition: 0.2s;
+  }
+  .pagination>.active>a,
+  .pagination>.active>span,
+  .pagination>.active>a:focus,
+  .pagination>.active>span:focus {
+    background-color: var(--mainColor) !important;
+    border-color: var(--mainColor) !important;
+    transition: 0.2s;
+  }
+  .pagination>li>a:hover,
+  .pagination>li>span:hover,
+  .pagination>.active>a:hover,
+  .pagination>.active>span:hover {
+    color: var(--mainColor) !important;
+    background-color: white !important;
+    border-color: var(--mainColor) !important;
+    transition: 0.2s;
+  }
+
+  /* 드롭다운 */
+  .dropdown.open .dropdown-menu,
+  .input-group-btn.open .dropdown-menu {
+    opacity: unset;
+    transform: unset;
+    border: 2px solid var(--mainColor);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.275);
+  }
+
+  .dropdown .dropdown-menu,
+  .input-group-btn .dropdown-menu {
+    display: block !important;
+    opacity: 0;
+    transform: scale(0);
+    transform-origin: top;
+    transition: all 0.4s cubic-bezier(0.18, 1.5, 0, 1);
+    padding: 8px 0 3px 0px;
+  }
+
+  .dropdown-menu>li>a {
+    transition: 0.1s;
+  }
+
+  .dropdown-menu>li>a:hover {
+    background: transparent;
+    transform: scaleX(1.04);
+    transition: 0.1s;
+  }
+
+  #latestDropdownMenu>li>a>span.delrow,
+  #favoriteDropdownMenu>li>a>span.delrow {
+    color: var(--mainColor);
+  }
+
+  #latestDropdownMenu>li>a>span.delrow:hover,
+  #favoriteDropdownMenu>li>a>span.delrow:hover {
+    background: transparent;
+  }
+
+  #favoriteDropdownMenu>li>a>span.label.label-default {
+    background-color: var(--mainColor);
+  }
+
+  .dropdown-menu .divider {
+    background-color: var(--mainColor);
+    height: 2px;
+    margin: 3px 0;
+  }
+
+  /* 글쓰기 내부 배경 추가 */
+
+  h3 { display: none; }
+  form#articleWriteForm {
+        margin: -1em -1em 0;
+      background: var(--bgFrame);
+      padding: 3px 10px 10px;
+      border: 2px solid var(--mainColor);
+      border-bottom: none;
+  }
+  form#image-upload-form {
+      margin: 0 -1em -1em;
+      background: var(--bgFrame);
+      padding: 10px;
+      border: 2px solid var(--mainColor);
+      border-top: none;
+  }
+
+  /* 버튼, 하단 검색 */
+  .btn.square {
+    border: 1px solid !important;
+    margin-right: -1px !important;
+  }
+
+  button.btn.square.btn-default.dropdown-toggle { border-radius: 0px 0 0 0px !important; }
+  .input-group-btn:last-child>.btn { border-radius: 0 0px 0px 0 !important; }
+  .input-group-btn i.fa-search { color: var(--btColor) !important; }
+
+  .btn,
+  select.form-control,
+  input.form-control {
+    box-shadow: inset 0 0 0 0 var(--btColor) !important;
+    border-radius: 0px;
+    border-color: var(--btColor) !important;
+    color: var(--btColor) !important;
+    padding: 5px 12px;
+    height: 28px !important;
+    background: transparent !important;
+    transition: 0.2s !important;
+  }
+
+  .btn[tabindex="-1"], .btn[type="submit"] { padding: 4px 12px !important; }
+  .vote-btn { height: 32px !important; }
+
+  .btn:hover,
+  .btn:focus,
+  select.form-control:hover,
+  select.form-control:focus,
+  input.form-control:hover,
+  input.form-control:focus {
+    background: white !important;
+    border-color: var(--mainColor) !important;
+    color: var(--mainColor) !important;
+  }
+
+  .btn[data-type="up"] { --btColor: #5cb85c; }
+  .btn[data-type="down"] { --btColor: #0275d8; }
+  .btn-default.best { --btColor: #efc839; }
+  .btn-outline-danger { --btColor: #d9534f; }
+  .btn-danger { --btColor: #ff6e6e; }
+  .btn-info { --btColor: #5bc0de; }
+
+  .btn-primary,
+  .btn-default,
+  input.form-control {
+    --btColor: var(--mainColor);
+  }
+
+  select.form-control,
+  input#title,
+  .input-group-btn>button#addPollBtn {
+    --btColor: var(--mainColor);
+    height: 30px !important;
+    transition: 0.2s;
+    -webkit-transition: 0.2s;
+  }
+
+  div#title_color>input { height: 30px !important; }
+
+  input.form-control {
+    transition: 0.2s !important;
+    -webkit-transition: 0.2s !important;
+  }
+
+  input.form-control:hover,
+  input.form-control:focus {}
+
+  input.form-control::placeholder { color: var(--btColor) !important; }
+  input.form-control:hover::placeholder,
+  input.form-control:focus::placeholder {
+    color: var(--mainColor) !important;
+  }
+
+  /* 버튼, 하단 검색 끝 */
+
+  html.darkmode footer a { color: var(--mainColor); }
+  </style>    <!-- Google Tag Manager -->
+</head>   <!-- Google Tag Manager -->
+<script th:inline="javascript">
+  // 시간 출력 함수
+
+
+  //대댓글 작성부분 나오게 해주는 토글버튼
+  $(document).ready(function() {
+    $(document).on('click', '.toggle-comment', function(event) {
+      event.preventDefault(); // prevent the default action
+      $(this).closest('.row').closest('.comment-section').next('.hidden-comment').toggle(); // toggle the visibility of the next hidden comment
+    });
+  });
+
+
+  $(document).ready(function() {
+    $('.edit-btn').click(function(event) {
+      event.preventDefault(); // prevent the default action
+
+      // Get the closest comment section.
+      const commentSection = $(this).closest('.comment-section');
+
+      // Find the comment content and form within the comment section.
+      const commentContentDiv = commentSection.find('.comment-content');
+      const formElement = commentSection.find('.comment-edit');
+
+      // Toggle the visibility of the comment content and form.
+      commentContentDiv.toggle();
+      formElement.toggle();
+      if ($(this).text() === '수정') {
+        $(this).text('취소');
+      } else {
+        $(this).text('수정');
+      }
+    });
+  });
+
+
+  //신고페이지 띄움
+  $(document).ready(function() {
+    $('a.report-link').click(function(event) {
+      event.preventDefault(); // prevent the default action
+
+      // Calculate the position of the new window
+      var left = screen.availLeft + 200; // 왼쪽으로 200px 이동
+      var top = screen.availTop + 200; // 위쪽으로 200px 이동
+
+      // Open a new small-sized window at the calculated position
+      window.open($(this).attr('href'), '_blank', 'width=400,height=500,left=' + left + ',top=' + top);
+    });
+  });
+
+  function scrollToComment(commentId) {
+    var commentElement = document.getElementById('comment' + commentId);
+    if (commentElement) {
+      commentElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  function scrollToCommentsComment(commentsCommentId) {
+    var commentsCommentElement = document.getElementById('commentsComment' + commentsCommentId);
+    if (commentsCommentElement) {
+      commentsCommentElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+  function handleMove(button) {
+    var type = button.getAttribute('data-type');
+    var id = button.getAttribute('data-id');
+
+    if (type === 'comment') {
+      scrollToComment(id);
+    } else if (type === 'commentscomment') {
+      scrollToCommentsComment(id);
+    }
+  }
+  function submitForm(categoryId) {
+    var url = "/board/" + categoryId;
+    window.location.href = url;
+  }
+  //댓글 대댓글 로그인 체크
+  function checkLogin() {
+    var memberIdx = /*[[${memberIdx}]]*/ null;
+    if (memberIdx==null) {
+      var originalUrl = window.location.href; // 현재 페이지의 URL을 가져옴
+      alert("로그인 해주세요.")
+      window.location.href = "/member/login?returnUrl=" + encodeURIComponent(originalUrl);
+      return false;
+    }
+    return true;
+  }
+  //댓글 유효성 검사
+  function checkCommentContent() {
+    var commentContent = document.getElementById("newCommentContent").value.trim();
+    var loggedIn = checkLogin();
+    if (!loggedIn) {
+      return false;
+    }
+    if (commentContent === "") {
+      alert( "댓글 내용을 입력해주세요.") ;
+      return false;
+    }
+
+    return true;
+  }
+  //댓글 수정 유효성 검사
+  function checkCommentUpdateContent(){
+    var commentId = $(event.target).data('comment-update');
+    var commentContent = document.getElementById("commentContent" + commentId).value.trim();
+    if (commentContent === "") {
+      alert( "댓글 내용을 입력해주세요.") ;
+      return false;
+    }
+    return true;
+  }
+  //대댓글 유효성 검사
+  function checkCommentsCommentContent() {
+    var commentId = $(event.target).data('commentscomment-new');
+    var commentsCommentContent = document.getElementById("newCommentsCommentContent"+commentId).value.trim();
+    var loggedIn = checkLogin();
+    if (!loggedIn) {
+      return false;
+    }
+
+    if (commentsCommentContent === "") {
+      alert( "대댓글 내용을 입력해주세요.") ;
+      return false;
+    }
+
+    return true;
+  }
+  //대댓글 수정 유효성 검사
+  function checkCommentsCommentUpdateContent(){
+    var commentsCommentId = $(event.target).data('commentscomment-update');
+    var commentsCommentContent = document.getElementById("commentsCommentContent" + commentsCommentId).value.trim();
+    if (commentsCommentContent === "") {
+      alert( "대댓글 내용을 입력해주세요.") ;
+      return false;
+    }
+    return true;
+  }
+  //삭제 확인 메세지
+  function confirmDelete() {
+    return confirm("삭제하시겠습니까?");
+  }
+  // 좋아요 또는 싫어요 Ajax 요청 전송 함수
+  function sendBoardLikeHateRequest(isLike) {
+    var boardId = document.getElementById("boardId").textContent;
+    var memberIdx = /*[[${memberIdx}]]*/ null;
+    // var token = $("meta[name='_csrf']").attr("content");
+    // var header = $("meta[name='_csrf_header']").attr("content");
+    var likeImage = document.getElementById("likeImage");
+    var hateImage = document.getElementById("hateImage");
+
+    if (memberIdx === null) {
+      // 로그인되지 않은 상태이므로 로그인 창으로 리다이렉트
+      var originalUrl = window.location.href; // 현재 페이지의 URL을 가져옴
+      window.location.href = "/member/login?returnUrl=" + encodeURIComponent(originalUrl);
+      alert("로그인 해주세요.")
+      return; // 리다이렉트 후 함수를 종료
+    }
+    if(likeImage.src.includes("selectGood.png")&&isLike){
+      if(confirm("좋아요를 취소하시겠습니까?")){
+
+      }else{
+        return;
+      }
+
+    }
+    if(hateImage.src.includes("selectBad.png")&&!isLike){
+      if(confirm("싫어요를 취소하시겠습니까?")){
+
+      }else{
+        return;
+      }
+
+    }
+
+    var request = {
+      boardId: boardId,
+      idx: memberIdx,
+      like: isLike,
+      hate: !isLike
+    };
+
+    // Ajax 요청 보내기
+    $.ajax({
+      type: "POST",
+      url: "/boardlikeHate",
+      contentType: "application/json",
+      data: JSON.stringify(request),
+      // beforeSend: function(xhr) {
+      //   xhr.setRequestHeader(header, token);
+      // },
+      success: function(response) {
+        // 요청 처리 성공 시, 응답 처리
+        if (isLike && response.hate) {
+          alert("이미 싫어요를 선택하셨습니다.");
+          return;
+        }
+        if (!isLike && response.like) {
+          alert("이미 좋아요를 선택하셨습니다.");
+          return;
+        }
+
+        updateBoardLikeHateCounts(response);
+
+
+      },
+      error: function(error) {
+        // 요청 처리 실패 시, 에러 처리
+        console.log("Error:", error);
+      }
+    });
+  }
+  // 응답 데이터를 업데이트하는 함수
+  function updateBoardLikeHateCounts(response) {
+    document.getElementById("boardLikeCount").textContent = response.likeCount;
+    document.getElementById("boardHateCount").textContent = response.hateCount;
+    // 이미지 변경 로직
+    var likeImage = document.getElementById("likeImage");
+    var hateImage = document.getElementById("hateImage");
+
+
+    if (response.like) {
+      likeImage.src = "/img/selectGood.png"; // 채워진 좋아요 이미지 경로로 변경
+    } else {
+      likeImage.src = "/img/good.png"; // 비어진 좋아요 이미지 경로로 변경
+    }
+
+    // 싫어요 이미지 변경 로직 추가
+    if (response.hate) {
+      hateImage.src = "/img/selectBad.png";;
+    } else {
+      hateImage.src = "/img/bad.png";
+    }
+
+  }
+
+  //댓글부분
+  // 좋아요 싫어요 버튼 클릭 이벤트 핸들러
+  // $(document).ready(function() {
+  //   $('.comment-like-btn').click(function(event) {
+  //     var commentId = $(this).data('comment-id');
+  //     sendCommentLikeHateRequest(commentId, true);
+  //   });
+  //
+  //   $('.comment-hate-btn').click(function(event) {
+  //     var commentId = $(this).data('comment-id');
+  //     sendCommentLikeHateRequest(commentId, false);
+  //   });
+  // });
+  function sendCommentLikeHateRequest(isLike, event) {
+    var commentId = $(event.target).data('comment-id');
+    var memberIdx = /*[[${memberIdx}]]*/ null;
+    var likeImage = document.getElementById("likeCommentImage-"+commentId);
+    var hateImage = document.getElementById("hateCommentImage-"+commentId);
+    if (memberIdx === null) {
+      // 로그인되지 않은 상태이므로 로그인 창으로 리다이렉트
+      var originalUrl = window.location.href; // 현재 페이지의 URL을 가져옴
+      window.location.href = "/member/login?returnUrl=" + encodeURIComponent(originalUrl);
+      alert("로그인 해주세요.")
+      return; // 리다이렉트 후 함수를 종료
+    }
+    if(likeImage.src.includes("selectGood.png")&&isLike){
+      if(confirm("좋아요를 취소하시겠습니까?")){
+
+      }else{
+        return;
+      }
+    }
+
+    if(hateImage.src.includes("selectBad.png")&&!isLike){
+      if(confirm("싫어요를 취소하시겠습니까?")){
+
+      }else{
+        return;
+      }
+    }
+
+    var request = {
+      commentId: commentId,
+      idx: memberIdx,
+      like: isLike,
+      hate: !isLike
+    };
+    $.ajax({
+      type: "POST",
+      url: "/commentlikeHate",
+      contentType: "application/json",
+      data: JSON.stringify(request),
+      success: function(response) {
+        if (isLike && response.hate) {
+          alert("이미 싫어요를 선택하셨습니다.");
+          return;
+        }
+        if (!isLike && response.like) {
+          alert("이미 좋아요를 선택하셨습니다.");
+          return;
+        }
+        updateCommentLikeHateCounts(commentId, response.likeCount, response.hateCount,response);
+      },
+      error: function(error) {
+        console.log("Error:", error);
+      }
+    });
+  }
+
+  function updateCommentLikeHateCounts(commentId, likeCount, hateCount,response) {
+    var likeCountElement = document.getElementById("comment-like-count-" + commentId);
+    likeCountElement.textContent = likeCount;
+
+    var bestLikeCountElement = document.getElementById("best-comment-like-count-" + commentId);
+    if (bestLikeCountElement) {
+      bestLikeCountElement.textContent = likeCount;
+    }
+
+    var hateCountElement = document.getElementById("comment-hate-count-" + commentId);
+    hateCountElement.textContent = hateCount;
+
+    var bestHateCountElement = document.getElementById("best-comment-hate-count-" + commentId);
+    if (bestHateCountElement) {
+      bestHateCountElement.textContent = hateCount;
+    }
+    // 이미지 변경 로직
+    var likeImage = document.getElementById("likeCommentImage-"+commentId);
+    var bestLikeImage = document.getElementById("bestLikeCommentImage-"+commentId);
+    var hateImage = document.getElementById("hateCommentImage-"+commentId);
+    var bestHateImage = document.getElementById("bestHateCommentImage-"+commentId);
+
+
+    if (response.like) {
+      likeImage.src = "/img/selectGood.png"; // 채워진 좋아요 이미지 경로로 변경
+      if(bestLikeImage){
+        bestLikeImage.src= "/img/selectGood.png";
+      }
+    } else {
+      likeImage.src = "/img/good.png"; // 비어진 좋아요 이미지 경로로 변경
+      if(bestLikeImage){
+        bestLikeImage.src = "/img/good.png";
+      }
+    }
+
+    // 싫어요 이미지 변경 로직 추가
+    if (response.hate) {
+      hateImage.src = "/img/selectBad.png";
+      if(bestHateImage){
+        bestHateImage.src = "/img/selectBad.png";
+      }
+    } else {
+      hateImage.src = "/img/bad.png";
+      if(bestHateImage){
+        bestHateImage.src="/img/bad.png";
+      }
+    }
+
+  }
+
+  //대댓글부분
+  // 좋아요 싫어요 버튼 클릭 이벤트 핸들러
+  // $(document).ready(function() {
+  //   $('.commentscomment-like-btn').click(function(event) {
+  //     var commentsCommentId = $(this).data('commentscomment-id');
+  //     sendCommentsCommentLikeHateRequest(commentsCommentId, true);
+  //   });
+  //
+  //   $('.commentscomment-hate-btn').click(function(event) {
+  //     var commentsCommentId = $(this).data('commentscomment-id');
+  //     sendCommentsCommentLikeHateRequest(commentsCommentId, false);
+  //   });
+  // });
+  function sendCommentsCommentLikeHateRequest(isLike,event) {
+    var commentsCommentId = $(event.target).data('commentscomment-id');
+    var memberIdx = /*[[${memberIdx}]]*/ null;
+    var likeImage = document.getElementById("likeCommentsCommentImage-"+commentsCommentId);
+    var hateImage = document.getElementById("hateCommentsCommentImage-"+commentsCommentId);
+    if (memberIdx === null) {
+      // 로그인되지 않은 상태이므로 로그인 창으로 리다이렉트
+      var originalUrl = window.location.href; // 현재 페이지의 URL을 가져옴
+      window.location.href = "/member/login?returnUrl=" + encodeURIComponent(originalUrl);
+      alert("로그인 해주세요.")
+      return; // 리다이렉트 후 함수를 종료
+    }
+    if(likeImage.src.includes("selectGood.png")&&isLike){
+      if(confirm("좋아요를 취소하시겠습니까?")){
+
+      }else{
+        return;
+      }
+    }
+
+    if(hateImage.src.includes("selectBad.png")&&!isLike){
+      if(confirm("싫어요를 취소하시겠습니까?")){
+
+      }else{
+        return;
+      }
+    }
+
+    var request = {
+      commentsCommentId: commentsCommentId,
+      idx: memberIdx,
+      like: isLike,
+      hate: !isLike
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "/commentsCommentlikeHate",
+      contentType: "application/json",
+      data: JSON.stringify(request),
+      success: function(response) {
+        if (isLike && response.hate) {
+          alert("이미 싫어요를 선택하셨습니다.");
+          return;
+        }
+        if (!isLike && response.like) {
+          alert("이미 좋아요를 선택하셨습니다.");
+          return;
+        }
+        updateCommentsCommentLikeHateCounts(commentsCommentId, response.likeCount, response.hateCount,response);
+      },
+      error: function(error) {
+        console.log("Error:", error);
+      }
+    });
+  }
+
+  function updateCommentsCommentLikeHateCounts(commentsCommentId, likeCount, hateCount,response) {
+    var likeCountElement = document.getElementById("commentscomment-like-count-" + commentsCommentId);
+    likeCountElement.textContent = likeCount;
+
+    var bestLikeCountElement = document.getElementById("best-commentscomment-like-count-" + commentsCommentId);
+    if (bestLikeCountElement) {
+      bestLikeCountElement.textContent = likeCount;
+    }
+
+    var hateCountElement = document.getElementById("commentscomment-hate-count-" + commentsCommentId);
+    hateCountElement.textContent = hateCount;
+
+    var bestHateCountElement = document.getElementById("best-commentscomment-hate-count-" + commentsCommentId);
+    if (bestHateCountElement) {
+      bestHateCountElement.textContent = hateCount;
+    }
+    // 이미지 변경 로직
+    var likeImage = document.getElementById("likeCommentsCommentImage-"+commentsCommentId);
+    var bestLikeImage = document.getElementById("bestLikeCommentsCommentImage-"+commentsCommentId);
+    var hateImage = document.getElementById("hateCommentsCommentImage-"+commentsCommentId);
+    var bestHateImage = document.getElementById("bestHateCommentsCommentImage-"+commentsCommentId);
+
+
+    if (response.like) {
+      likeImage.src = "/img/selectGood.png"; // 채워진 좋아요 이미지 경로로 변경
+      if(bestLikeImage){
+        bestLikeImage.src="/img/selectGood.png";
+      }
+    } else {
+      likeImage.src = "/img/good.png"; // 비어진 좋아요 이미지 경로로 변경
+      if(bestLikeImage){
+        bestLikeImage.src="/img/good.png";
+      }
+    }
+
+    // 싫어요 이미지 변경 로직 추가
+    if (response.hate) {
+      hateImage.src = "/img/selectBad.png";
+      if(bestHateImage){
+        bestHateImage.src= "/img/selectBad.png";
+      }
+    } else {
+      hateImage.src = "/img/bad.png";
+      if(bestHateImage){
+        bestHateImage.src= "/img/bad.png";
+      }
+    }
+
+  }
+</script>
+
+
+<body>
+<header>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-4">
+        <a href="/"> <img src="/img/free-icon-proteins-780013.png" alt="이미지_설명"  width="100" height="50"></a>
+      </div>
+      <div class="col-xs-8" align="right">
+        <form action="/search" method="get" id="right-search-form">
+          <input type="text" placeholder="검색" value="" id="right-search-input" name="q">
+          <button type="submit" id="right-search-btn"><i class="fa fa-search"></i></button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="header-bar" class="container">
+    <div class="row">
+      <div id="header-menu-left" class="col-xs-2" align="left">
+
+      </div>
+
+
+      <div id="header-menu-right" class="col-xs-2" align="right">
+
+
+      </div>
+    </div>
+  </div>
+</header>
+<div id="content-area">
+
+  <div class="container" id="main">
+    <div class="row">
+      <div class="col-xs-2" id="main-menu">
+        <div class="menu-wrapper">
+          <div class="header"><i class="fa fa-bars"></i>  전체 메뉴</div>
+          <a class="shortcut-link" data-shortcut="a" href="/board/all"><em>A</em>전체 글 보기</a>
+          <div class="spacer"></div>
+          <div id="fav-shortcut-area"></div>
+          <a class="shortcut-link" data-shortcut="b" href="/shop/main/ALL"><em>B</em>쇼핑몰</a>
+
+          <div class="spacer"></div>
+          <a class="shortcut-link" data-shortcut="c" href="/health/healthCalculator" ><em>C</em>각종 계산기</a>
+
+          <div class="spacer"></div>
+          <a class="shortcut-link" data-shortcut="p" href="/user/mypage"><em>P</em>마이페이지</a>
+        </div>
+      </div>
+
+
+      <div class="col-xs-10" id="main-content">
+        <div class="frame">
+          <div id="board-info" data-owner-id="127431197" data-type="comm" data-alias="css" data-name="CSS 디자인">
+            <h1>
+             <span th:text="${board.category.categoryName}"></span>
+
+            </h1>
+
+          </div>
+
+
+          <div id="article-info">
+            <h2>
+              <span class="category" style="color:#1e7e82"th:text="${board.category.categoryName}"></span>
+              <span th:text="${board.boardTitle}"></span>    </h2>
+            <span id="boardId" th:text="${board.boardId}" style="display: none"></span>
+
+            <div id="article-info-writer">
+               <strong th:text="${boardCreatedBy}"></strong>님
+            </div>
+          </div>
+
+          <div id="article-content-wrapper">
+            <div class="header">
+        <span id="article-time">
+            <i class="fa fa-clock-o"></i>
+                 <script th:inline="javascript">
+                var boardTime = /*[[${board.regTime}]]*/ '';
+                var date = new Date(boardTime);
+                var today = new Date();
+                var year = date.getFullYear();
+                var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                var day = ('0' + date.getDate()).slice(-2);
+                var hours = ('0' + (date.getHours())).slice(-2);
+                var minutes = ('0' + date.getMinutes()).slice(-2);
+                var second =('0'+date.getSeconds()).slice(-2);
+                document.write(year+'-'+month + '-' + day + ' '+hours + ':' + minutes + ':'+second);
+              </script>
+        </span>
+              <span id="article-views" >
+            <i class="fa fa-eye"></i>
+                <span th:text="${board.boardCount}"></span>
+              </span>
+              <span id="article-votes">
+            <i class="fa fa-heart"></i>
+                <span th:text="${board.boardLikeCount}"></span>
+              </span>
+              <span id="article-comment">
+                <i class="fa fa-commenting"></i>
+                <span th:text="${board.commentCount}"></span>
+              </span>
+
+              <div th:if="${boardCreatedBy == memberNickname}">
+                <a th:href="'/board/Edit/' + ${board.boardId}">수정</a>
+              </div>
+              <div  th:if="${boardCreatedBy == memberNickname}">
+                <a th:href="'/board/Delete/' + ${board.boardId}" onclick="return confirmDelete()">삭제</a>
+              </div>
+            </div>
+
+            <div id="article-content" class="fr-view" th:data-id="${board.boardId}" data-last-cpage="1">
+              <p th:each="boardImg:${boardFormDto.boardImgDtoList}" style="text-align: center">
+                <img th:src="${boardImg.boardImgUrl}" class="rounded mgb-15" width="500">
+              </p>
+              <p th:text="${board.boardContent}"></p>
+
+              <p><br></p>
+
+
+              <div class="row" style="height: 100px;">
+                <div class="col-2 offset-4 p-4 text-center">
+                  <img id="likeImage" th:if="${isLike}" src="/img/selectGood.png" style="height: 50px; cursor: pointer;" onclick="sendBoardLikeHateRequest(true)">
+                  <img id="likeImage" th:unless="${isLike}" src="/img/good.png" style="height: 50px; cursor: pointer;" onclick="sendBoardLikeHateRequest(true)">
+                  <span id="boardLikeCount" style="margin-left: 5px; font-weight: bold; color: red;" th:text="${board.boardLikeCount}"></span>
+                </div>
+                <div class="col-2 p-4 text-center">
+                  <img id="hateImage" th:if="${isHate}" src="/img/selectBad.png" style="height: 50px; cursor: pointer;" onclick="sendBoardLikeHateRequest(false)">
+                  <img id="hateImage" th:unless="${isHate}" src="/img/bad.png" style="height: 50px; cursor: pointer;" onclick="sendBoardLikeHateRequest(false)">
+                  <span id="boardHateCount" style="margin-left: 5px; font-weight: bold; color: blue;" th:text="${board.boardHateCount}"></span>
+                </div>
+              </div>
+
+
+              <div class="footer d-flex justify-content-between" style="background-color: greenyellow;">
+                <div>
+                  <a th:href="'/board/'+${board.category.getCategoryId()}" class="btn btn-sm btn-default"><i class="fa fa-list"></i> 목록</a>
+                </div>
+                <div>
+                  <a th:href="'/report/board/' + ${board.boardId}" id="reportArticleBtn" tabindex="-1" class="btn btn-sm btn-outline-danger"><i class="fa fa-bell-slash-o"></i> 신고</a>
+                </div>
+              </div>
+          </div>
+
+          <a name="comment"></a>
+          <div id="article-reply-area" class="  ">
+            <div class="header">
+              <h5>
+                <i class="fa fa-commenting"></i> 댓글 <span id="totalCommentCount" th:text="${board.commentCount}"></span>개 &nbsp; <a href="#lastc" id="lastc">▼</a>
+              </h5>
+            </div>
+
+            <div id="reply-best-area"></div>
+
+            <div id="reply-real-area"  th:each="comment,status:${commentList}" th:id="'comment' + ${comment.commentId}">
+              <div th:class="'reply d-'+${comment.commentId}">
+                <div class="reply-header">
+              <div class="reply-writer logged">
+               <span th:text="${commentCreatedBy[__${status.index}__]}"></span>
+              </div>
+              <small class="code"></small>
+              <div class="reply-menu">
+                <div class="col-1 p-1 text-center">
+                  <img th:id="'likeCommentImage-'+${comment.commentId}" class="comment-like-btn" th:if="${comment.commentIsLike}" src="/img/selectGood.png" style="height: 50px; cursor: pointer;" th:data-comment-id="${comment.commentId}" onclick="sendCommentLikeHateRequest(true,event)">
+                  <img th:id="'likeCommentImage-'+${comment.commentId}" class="comment-like-btn" th:unless="${comment.commentIsLike}" src="/img/good.png" style="height: 50px; cursor: pointer;" th:data-comment-id="${comment.commentId}" onclick="sendCommentLikeHateRequest(true,event)">
+                  <span class="comment-like-count" th:id="'comment-like-count-' + ${comment.commentId}"  style="margin-left: 5px; font-weight: bold; color: red;"th:text="${comment.commentLikeCount}" ></span>
+                </div>
+                <div class="col-1 p-1 text-center">
+                  <img th:id="'hateCommentImage-'+${comment.commentId}" class="comment-hate-btn" th:if="${comment.commentIsHate}" src="/img/selectBad.png" style="height: 50px; cursor: pointer;" th:data-comment-id="${comment.commentId}" onclick="sendCommentLikeHateRequest(false,event)">
+                  <img th:id="'hateCommentImage-'+${comment.commentId}" class="comment-hate-btn" th:unless="${comment.commentIsHate}" src="/img/bad.png" style="height: 50px; cursor: pointer;" th:data-comment-id="${comment.commentId}" onclick="sendCommentLikeHateRequest(false,event)">
+                  <span class="comment-hate-count" th:id="'comment-hate-count-' + ${comment.commentId}"  style="margin-left: 5px; font-weight: bold; color: blue;"th:text="${comment.commentHateCount}" ></span>
+                </div>
+                <span class="middot">·</span>
+                <div class="row">
+                <a href="#" class="toggle-comment">대댓글</a>
+                </div>
+                <span class="middot">·</span>
+                <span class="time" >
+                   <script th:inline="javascript">
+                  var boardTime = /*[[${comment.regTime}]]*/ '';
+                  var date = new Date(boardTime);
+                  var today = new Date();
+                  var year = date.getFullYear();
+                  var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                  var day = ('0' + date.getDate()).slice(-2);
+                  var hours = ('0' + (date.getHours())).slice(-2);
+                  var minutes = ('0' + date.getMinutes()).slice(-2);
+                  var second =('0'+date.getSeconds()).slice(-2);
+                  document.write(year+'-'+month + '-' + day + ' '+hours + ':' + minutes + ':'+second);
+                </script>
+                </span>
+                <span class="middot">·</span>
+                <div class="col-1 p-1 text-center" th:if="${commentCreatedBy[__${status.index}__]== memberNickname}">
+                  <button class="edit-btn">수정</button>
+                </div>
+                <div class="col-1 p-1 text-center"th:if="${commentCreatedBy[__${status.index}__]== memberNickname}">
+                  <form method="post" action="/comment/delete" onsubmit="return confirmDelete()">
+                    <input type="hidden" name="boardId" th:value="${board.boardId}">
+                    <input type="hidden" name="commentId" th:value="${comment.commentId}">
+                    <!--                  <span id="commentId" th:text="${comment.commentId}" style="display: none"></span>-->
+                    <button type="submit">삭제</button>
+                  </form>
+                </div>
+                <span class="middot">·</span>
+                <a th:href="'/report/comment/' + ${comment.commentId}" th:text="'신고('+${comment.commentReportsCount}+')'" class="report-link" onclick="return checkLogin()"></a>
+                </div>
+                </div>
+              <div class="reply-content">
+                <p th:text="${comment.commentContent}">
+                </p>
+              </div>
+                <form role="form" method="post" action="/comment/edit" class="comment-edit" style="display:none"  th:data-comment-update="${comment.commentId}" onsubmit="return checkCommentUpdateContent()">
+                  <input type="hidden" name="boardId" th:value="${board.boardId}"/>
+                  <input type="hidden" name="commentId" th:value="${comment.commentId}" />
+                  <div class="row">
+                    <div class="col-10 p-4">
+                      <textarea th:id="'commentContent'+${comment.commentId}" name="commentContent"class="form-control" rows="4" th:text="${comment.commentContent}"></textarea>
+                    </div>
+                    <div class="col-1 p-4">
+                      <button type="submit" class="form-control">수정</button>
+                    </div>
+                  </div>
+                </form>
+                <div class="hidden-comment" style="display:none" >
+                  <form role="form" method="post" action="/commentsComment/new" th:data-commentscomment-new="${comment.commentId}"onsubmit="return checkCommentsCommentContent()">
+                    <input type="hidden" name="comment" th:value="${comment.commentId}"/>
+                    <div class="row">
+                      <div class="offset-2 col-9 p-4">
+                        <textarea th:id="'newCommentsCommentContent'+${comment.commentId}" name="commentsCommentContent"  class="form-control" rows="4" placeholder="대댓글작성부분" onclick="checkLogin()"></textarea>
+                      </div>
+                      <div class="col-1 p-4">
+                        <button type="submit" class="form-control" >작성</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div  th:each="commentsComment,status:${commentsCommentMap.get(comment.commentId)}" th:id="'commentsComment' + ${commentsComment.commentsCommentId}">
+                  <div class="reply-header">
+                    <div class="reply-writer logged">
+                    <span  th:text="${commentsCommentCreatedBy[__${status.index}__]}">
+
+                    </span>
+                      <small class="code"th:if="${commentCreatedBy[__${status.index}__]== memberNickname}">(글쓴이) </small>
+                      <div class="reply-menu">
+                        <div class="col-1 p-1 text-center">
+                          <img th:id="'likeCommentsCommentImage-'+${commentsComment.commentsCommentId}" class="commentscomment-like-btn" th:if="${commentsComment.commentsCommentIsLike}" src="/img/selectGood.png" style="height: 50px; cursor: pointer;" th:data-commentscomment-id="${commentsComment.commentsCommentId}" onclick="sendCommentsCommentLikeHateRequest(true,event)">
+                          <img th:id="'likeCommentsCommentImage-'+${commentsComment.commentsCommentId}" class="commentscomment-like-btn" th:unless="${commentsComment.commentsCommentIsLike}" src="/img/good.png" style="height: 50px; cursor: pointer;" th:data-commentscomment-id="${commentsComment.commentsCommentId}" onclick="sendCommentsCommentLikeHateRequest(true,event)">
+                          <span class="commentscomment-like-count" th:id="'commentscomment-like-count-' + ${commentsComment.commentsCommentId}"  style="margin-left: 5px; font-weight: bold; color: red;"th:text="${commentsComment.commentsCommentLikeCount}" ></span>
+                        </div>
+                        <div class="col-1 p-1 text-center">
+                          <img th:id="'hateCommentsCommentImage-'+${commentsComment.commentsCommentId}" class="commentscomment-hate-btn" th:if="${commentsComment.commentsCommentIsHate}" src="/img/selectBad.png" style="height: 50px; cursor: pointer;" th:data-commentscomment-id="${commentsComment.commentsCommentId}" onclick="sendCommentsCommentLikeHateRequest(false,event)">
+                          <img th:id="'hateCommentsCommentImage-'+${commentsComment.commentsCommentId}" class="commentscomment-hate-btn" th:unless="${commentsComment.commentsCommentIsHate}" src="/img/bad.png" style="height: 50px; cursor: pointer;" th:data-commentscomment-id="${commentsComment.commentsCommentId}" onclick="sendCommentsCommentLikeHateRequest(false,event)">
+                          <span class="commentscomment-hate-count" th:id="'commentscomment-hate-count-' + ${commentsComment.commentsCommentId}"  style="margin-left: 5px; font-weight: bold; color: blue;"th:text="${commentsComment.commentsCommentHateCount}" ></span>
+                        </div>
+                        <span class="middot">·</span>
+                        <span class="time">
+                        <script th:inline="javascript">
+                          var boardTime = /*[[${commentsComment.regTime}]]*/ '';
+                          var date = new Date(boardTime);
+                          var today = new Date();
+                          var year = date.getFullYear();
+                          var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                          var day = ('0' + date.getDate()).slice(-2);
+                          var hours = ('0' + (date.getHours())).slice(-2);
+                          var minutes = ('0' + date.getMinutes()).slice(-2);
+                          var second =('0'+date.getSeconds()).slice(-2);
+                          document.write(year+'-'+month + '-' + day + ' '+hours + ':' + minutes + ':'+second);
+                        </script>
+                    </span>
+                        <span class="middot">·</span>
+                        <a th:href="'/report/commentsComment/' + ${commentsComment.commentsCommentId}" th:text="'신고('+${commentsComment.commentsCommentReportsCount}+')'" class="report-link" onclick="return checkLogin()"></a>
+                        <div class="clearfix">
+                        </div>
+                      </div>
+                      <div class="reply-content"><p th:text="${commentsComment.commentsCommentContent}"></p>
+                      </div>
+                      <form role="form" method="post" action="/commentsComment/edit" class="comment-edit" style="display:none"th:data-commentscomment-update="${commentsComment.commentsCommentId}" onsubmit="return checkCommentsCommentUpdateContent()">
+                        <input type="hidden" name="boardId" th:value="${board.boardId}"/>
+                        <input type="hidden" name="commentsCommentId" th:value="${commentsComment.commentsCommentId}"/>
+                        <div class="row">
+                          <div class="offset-2 col-9 p-4">
+                            <textarea th:id="'commentsCommentContent'+${commentsComment.commentsCommentId}"name="commentsCommentContent" class="form-control" rows="4" th:text="${commentsComment.commentsCommentContent}"></textarea>
+                          </div>
+                          <div class="col-1 p-4">
+                            <button type="submit" class="form-control">수정</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                    <a name="lastc"></a>
+
+                  </div>
+
+                </div>
+              </div>
+
+
+          </div>
+        </div>
+            <div id="comment-write-form-area">
+              <form role="form" method="post" action="/comment/new" onsubmit="return checkCommentContent()" id="comment-write-form" class="mt-2">
+                <input type="hidden" name="boardId" th:value="${board.boardId}"/>
+
+                  <textarea id="newCommentContent" name="commentContent" rows="4" class="form-control" placeholder="내용을 입력해주세요."  onclick="checkLogin()"></textarea>
+
+                <div id="comment-write-button-area">
+                  <button class="btn btn-default pull-left hide btn-sm" tabindex="-1" type="submit" id="btnRereplyCancelBtn">취소</button>
+                  <button class="btn btn-primary pull-right btn-sm" type="submit" accesskey="s" id="writeCommentBtn"><i class="fa fa-pencil"></i> 댓글 쓰기</button>
+                  <div class="clearfix"></div>
+                </div>
+              </form>
+            </div>
+      </div>
+    </div>
+      </div>
+    </div>
+    </div>
+  <footer>
+    <div class="container">
+          <span>프로틴 데이<br><br>
+            반가워요.<br><br>
+           </span>
+      <button class="theme_btn_box" id="theme_btn_box"><div class="theme_btn"></div></button>
+    </div>
+
+    <a href="#" id="movetotop" style="left: 1080px; display: none;"><img src="https://d4fodtu7cqfym.cloudfront.net/images/move_to_top.png" alt=""></a>
+    <script type="text/javascript">var AD = [{"content":"\uc57c, \ub0b4 \uac1c\uca4c\ub294 \uce74\ub4dc\ub97c \ubd10\uc918! \ub9c8\ub4c0 \ub300\ud68c(\uc2e0\uccad : ~7\/21)","link":"https:\/\/tgd.kr\/s\/joeleng2\/70919189"},{"content":"\uc628\ub9ac\uc5c5... \ub4dc\ub514\uc5b4 \uaea0\ub098?? 12\uc2dc\uac04\uc9f8 \u3137\u3137","link":"https:\/\/www.twitch.tv\/anyaak_"},{"content":"\uc57c, \ub0b4 \uac1c\uca4c\ub294 \uce74\ub4dc\ub97c \ubd10\uc918! \ub9c8\ub4c0 \ub300\ud68c(\uc2e0\uccad : ~7\/21)","link":"https:\/\/tgd.kr\/s\/joeleng2\/70919189"},{"content":"\ub4c0\uc5bc\ub85c \uc2b9\ubd80\ub2f7!\uff3c\uff3c\u0669(\u0e51\u2022\u0300\u3142\u2022\u0301)\u0648\/\/\uff0f\uff0f[\uc2e0\uccad : ~7\/21]","link":"https:\/\/tgd.kr\/s\/joeleng2\/70919189"},{"content":"\ub098 \ucc0d\uba39\uc774\ub77c\uace0!!!","link":"https:\/\/www.twitch.tv\/burning10e"},{"content":"\ucc9c\ud558\uc81c\uc77c \ub0ad\ub9cc \ub515 \uc790\ub791 \ub300\ud68c [\ub9c8\ub4c0]","link":"https:\/\/tgd.kr\/s\/joeleng2\/70919189"}];</script>
+    <script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script type="text/javascript" src="https://cdn-assets.tgd.kr/js/tgd.base.min.js?v=b351"></script>
+    <script type="text/javascript" src="https://cdn-assets.tgd.kr/js/1145f263256c923716d2b8eade2f6689.min.js?v=b351"></script><script type="text/javascript" src="https://cdn-assets.tgd.kr/js/16f98521b2a9c4bc79e4551a240b555c.min.js?v=b351"></script>    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async=""></script><iframe src="https://f5094c89f295b79b9c0d8354b4497855.safeframe.googlesyndication.com/safeframe/1-0-40/html/container.html" style="visibility: hidden; display: none;"></iframe>
+  </footer>
+  </div>
+</body>
+</html>

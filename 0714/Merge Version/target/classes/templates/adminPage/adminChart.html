@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Category Views Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<canvas id="categoryViewsChart"></canvas>
+
+<script>
+  // Step 1: 가져온 데이터 예시
+  const categoryData = [
+    { category: "Category 1", data: [
+        { date: "2023-06-23", views: 10 },
+        { date: "2023-06-24", views: 15 },
+        { date: "2023-06-25", views: 8 }
+      ]},
+    { category: "Category 2", data: [
+        { date: "2023-06-23", views: 5 },
+        { date: "2023-06-24", views: 12 },
+        { date: "2023-06-25", views: 6 }
+      ]}
+  ];
+
+  // Step 2: 데이터 가공
+  const labels = categoryData[0].data.map(entry => entry.date);
+  const datasets = categoryData.map(category => {
+    return {
+      label: category.category,
+      data: category.data.map(entry => entry.views),
+      backgroundColor: getRandomColor()
+    };
+  });
+
+  // Step 3: 그래프 생성
+  const ctx = document.getElementById('categoryViewsChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      title: {
+        display: true,
+        text: 'Category Views'
+      }
+    }
+  });
+
+  // 랜덤 색상 생성
+  function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+</script>
+</body>
+</html>

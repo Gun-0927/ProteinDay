@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<!--<head>-->
+<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+<!--</head>-->
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            var  errorMessage = [[${errorMessage}]];
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+            bindDomEvent();
+        });
+
+        function bindDomEvent(){
+            $(".custom-file-input").on("change", function() {
+                var fileName = $(this).val().split("\\").pop();  //이미지 파일명
+                var fileExt = fileName.substring(fileName.lastIndexOf(".")+1); // 확장자 추출
+                fileExt = fileExt.toLowerCase(); //소문자 변환
+
+                if(fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp"){
+                    alert("이미지 파일만 등록이 가능합니다.");
+                    return;
+                }
+
+                $(this).siblings(".custom-file-label").html(fileName);
+            });
+        }
+
+        function checkCountInput(input) {
+            if (input.value < 1) {
+                input.value = null;
+            }
+        }
+
+        //문의 답변 등록 코드
+        function answerWriter(inquiryId, itemId) {
+            //var token = $("meta[name='_csrf']").attr("content");
+            var confirmation = confirm("작성한 내용을 등록하시겠습니까?");
+            var answerContent = document.querySelector('.answerContent-' + inquiryId).value;
+
+
+            if (confirmation) {
+                console.log(inquiryId, itemId, answerContent);
+                $.ajax({
+                    type: "POST",
+                    url: "/item/inquiryAnswer/" + inquiryId,
+                    data: {
+                        answerContent: answerContent,
+                        inquiryId: inquiryId,
+                        itemId: itemId
+                    },
+                    headers: {
+                    },
+                    success: function(response) {
+                        console.log("답변이 등록 되었습니다.");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // 오류 응답일 경우 알림창 표시
+                        alert(xhr.responseText);
+                    }
+                });
+            }
+        }
+
+        //문의 답변 삭제 코드
+        function deleteInquiry(inquiryAnswerId) {
+            //var token = $("meta[name='_csrf']").attr("content");
+            var confirmation = confirm("문의를 삭제하시겠습니까?"); // 삭제를 확인하는 메시지
+
+            if (confirmation) { // 예 버튼을 클릭한 경우
+                $.ajax({
+                    type: "POST",
+                    url: "/item/inquiryAnswer/delete/" + inquiryAnswerId,
+                    headers: {
+                    },
+                    success: function(response) {
+                        console.log("답변이 성공적으로 삭제되었습니다.");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("답변 삭제 중 오류가 발생했습니다.");
+                    }
+                });
+            }
+        }
+        //문의 답변 수정 코드
+        function updateInquiry(inquiryAnswerId) {
+            //var token = $("meta[name='_csrf']").attr("content");
+            var updatedContent = document.querySelector('.content-input-' + inquiryAnswerId).value;
+            var confirmation = confirm("답변을 수정하시겠습니까?");
+
+            if (confirmation) {
+                $.ajax({
+                    type: "POST",
+                    url: "/item/inquiryAnswer/update/" + inquiryAnswerId,
+                    data: {
+                    id: inquiryAnswerId,
+                    content: updatedContent
+                    },
+                    headers: {
+                    },
+                    success: function(response) {
+                        console.log("답변이 성공적으로 수정되었습니다.");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // 오류 응답일 경우 알림창 표시
+                        alert(xhr.responseText);
+                    }
+                });
+            }
+        }
+
+        function editMode(inquiryAnswerId) {
+            var row = event.target.closest('tr');
+            var contentSpan = row.querySelector('.content-span-' + inquiryAnswerId);
+            var contentInput = row.querySelector('.content-input-' + inquiryAnswerId);
+            var buttonEditMode = row.querySelector('.button-editMode-' + inquiryAnswerId);
+            var buttonDelete = row.querySelector('.button-delete-' + inquiryAnswerId);
+            var buttonUpdate = row.querySelector('.button-update-' + inquiryAnswerId);
+            var buttonNoneEditMode = row.querySelector('.button-noneEditMode-' + inquiryAnswerId);
+
+            contentSpan.style.display = 'none';
+            contentInput.style.display = 'block';
+            buttonEditMode.style.display = 'none';
+            buttonDelete.style.display = 'none';
+            buttonUpdate.style.display = 'block';
+            buttonNoneEditMode.style.display = 'block';
+        }
+
+        function editModeCancel(inquiryAnswerId) {
+            var row = event.target.closest('tr');
+            var contentSpan = row.querySelector('.content-span-' + inquiryAnswerId);
+            var contentInput = row.querySelector('.content-input-' + inquiryAnswerId);
+            var buttonEditMode = row.querySelector('.button-editMode-' + inquiryAnswerId);
+            var buttonDelete = row.querySelector('.button-delete-' + inquiryAnswerId);
+            var buttonUpdate = row.querySelector('.button-update-' + inquiryAnswerId);
+            var buttonNoneEditMode = row.querySelector('.button-noneEditMode-' + inquiryAnswerId);
+
+            contentSpan.style.display = 'block';
+            contentInput.style.display = 'none';
+            buttonEditMode.style.display = 'block';
+            buttonDelete.style.display = 'block';
+            buttonUpdate.style.display = 'none';
+            buttonNoneEditMode.style.display = 'none';
+        }
+
+        //문의글 신고
+        function reportInquiry(inquiryId) {
+            var left = screen.availLeft + 200; // 왼쪽으로 200px 이동
+            var top = screen.availTop + 200; // 위쪽으로 200px 이동
+
+            // 신고 창을 표시할 HTML 문서의 URL
+            var reportUrl = '/report/shop/inquiry/' + inquiryId; // 신고 창을 표시할 HTML 문서의 URL에 itemId를 파라미터로 전달
+
+            // 새 창 열기
+            window.open(reportUrl, '_blank', 'width=800,height=500,left=' + left + ',top=' + top + ',resizable=no');
+        }
+
+        //리뷰 신고
+        function reportReview(reviewId) {
+            // 새 창의 위치 계산
+            var left = screen.availLeft + 200; // 왼쪽으로 200px 이동
+            var top = screen.availTop + 200; // 위쪽으로 200px 이동
+
+            // 신고 창을 표시할 HTML 문서의 URL
+            var reportUrl = '/report/shop/review/' + reviewId; // 신고 창을 표시할 HTML 문서의 URL에 itemId를 파라미터로 전달
+
+            // 새 창 열기
+            window.open(reportUrl, '_blank', 'width=800,height=500,left=' + left + ',top=' + top + ',resizable=no');
+        }
+
+
+    </script>
+
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        .input-group {
+            margin-bottom : 15px;
+        }
+        .img-div {
+            margin-bottom : 10px;
+        }
+        .fieldError {
+            color: #bd2130;
+        }
+        .itemMng {
+            border: 2px gray solid;
+            width: 100%;
+            text-align: center;
+            font-size: 20px;
+        }
+        .itemMng td {
+            border: 2px gray solid;
+        }
+        .management-box {
+            border : none;
+            height: 100%;
+            width: 100%;
+            text-align: center;
+        }
+        .inquiry {
+        border: 1px solid gray;
+        border-radius: 5px;
+        }
+        .button-wrapper {
+            display: inline-block;
+            width: 35%;
+            position: relative;
+            overflow: hidden;
+        }
+        .button-wrapper button {
+            width: 100%;
+            font-size: 14px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 0;
+            padding-right: 0;
+            white-space: nowrap;
+        }
+        .review {
+        border: 1px solid gray;
+        border-radius: 5px;
+        }
+
+        #reviewSub fieldset,
+        #reviewList fieldset {
+          display: inline-block;
+          direction: rtl;
+          border: 0;
+        }
+
+        #reviewSub fieldset legend,
+        #reviewList fieldset legend {
+          text-align: right;
+        }
+
+        #reviewSub input[type=radio],
+        #reviewList input[type=radio] {
+          display: none;
+        }
+
+        #reviewSub fieldset label{
+          font-size: 3em;
+          color: transparent;
+          text-shadow: 0 0 0 #f0f0f0;
+        }
+
+        #reviewList fieldset label {
+          font-size: 1em;
+          color: transparent;
+          text-shadow: 0 0 0 #f0f0f0;
+        }
+
+        #reviewSub fieldset label:hover,
+        #reviewList fieldset label:hover,
+        #reviewSub fieldset label:hover ~ label,
+        #reviewList fieldset label:hover ~ label {
+          text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+        }
+
+
+        #reviewSub fieldset input[type=radio]:checked ~ label,
+        #reviewList fieldset input[type=radio]:checked ~ label {
+          text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+        }
+
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+
+    <form role="form" method="post" enctype="multipart/form-data" th:object="${itemFormDto}">
+
+        <h2 style="text-align: center; border-radius: 5px; padding: 10px;" class="bg-secondary text-white">
+            판매 상품 관리
+            <input type="hidden" id="itemId" th:value="${itemFormDto.id}">
+        </h2>
+        <table class="itemMng">
+            <colgroup>
+                <col style="width: 40%;">
+                <col style="width: 10%;">
+                <col style="width: 50%;">
+            </colgroup>
+            <tr>
+                <td rowspan="5">
+                    <img style="width: 500px; height: 400px;"
+                            th:src="${itemFormDto.itemImgDtoList[0].imgUrl}" class = "rounded repImg" th:alt="${itemFormDto.itemNm}">
+                </td>
+                <td>판매 상태</td>
+                <td>
+                    <select th:field="*{itemSellStatus}" class="management-box">
+                        <option value="SELL">판매중</option>
+                        <option value="SOLD_OUT">품절</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>카테고리</td>
+                <td>
+                    <select th:field="*{itemCategory}" class="management-box">
+                        <option value="CLOTHES">운동복</option>
+                        <option value="FOOD">운동 식품</option>
+                        <option value="EASYFOOD">간편 식품</option>
+                        <option value="EQUIPMENT">운동 기구</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>재고</td>
+                <td>
+                    <input type="number" th:field="*{stockNumber}" class="management-box" placeholder="상품의 재고를 입력해주세요"
+                           onchange="checkCountInput(this)">
+                </td>
+            </tr>
+            <tr>
+                <td>상품명</td>
+                <td>
+                    <input type="text" th:field="*{itemNm}" class="management-box" placeholder="상품명을 입력해주세요">
+                </td>
+            </tr>
+            <tr>
+                <td>가격</td>
+                <td>
+                    <input type="number" th:field="*{price}" class="management-box" placeholder="상품의 가격을 입력해주세요"
+                           onchange="checkCountInput(this)">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">상품 상세 설명</td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <textarea class="management-box" aria-label="With textarea" placeholder="상품 상세 정보를 입력해주세요"
+                              style="text-align:left;" th:field="*{itemDetail}"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">상품 이미지 첨부</td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div th:if="${not #lists.isEmpty(itemFormDto.itemImgDtoList)}">
+                        <div th:each="itemImgDto, status: ${itemFormDto.itemImgDtoList}">
+                            <div class="custom-file img-div">
+                                <input type="file" class="custom-file-input" name="itemImgFile">
+                                <!--    이건 꼭필요한건인지? 나중에 확인해보기 근데 이것으로 id가 6씩 차이나는 이유임 -->
+                                <input type="hidden" name="itemImgIds" th:value="${itemImgDto.id}">
+                                <label class="custom-file-label"
+                                       th:text="${not #strings.isEmpty(itemImgDto.oriImgName)} ? ${itemImgDto.oriImgName} : '상품이미지' + ${status.index+1}">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div th:unless="${#strings.isEmpty(itemFormDto.id)}" style="text-align: center; margin-top: 10px;">
+            <button th:formaction="@{'/member/item/' + ${itemFormDto.id} }" type="submit" class="btn btn-dark">수정</button>
+            <!-- 개인적으로 추가한 부분 -->
+            <button th:formaction="@{'/member/itemDel/' + ${itemFormDto.id} }" type="submit" class="btn btn-dark">삭제</button>
+        </div>
+
+<!--        상품문의-->
+        <h5 style="text-align: center; border-radius: 5px; padding: 10px; margin-top:10px;" class="bg-secondary text-white">상품 문의 관리</h5>
+        <div class="inquiry" style="text-align: center;">
+            <table style="width:100%">
+                <tr style="text-align: center; font-weight: bold;">
+                    <td style="width: 10%">작성자</td>
+                    <td style="width: 60%">문의 내용</td>
+                    <td style="width: 15%">작성 시간</td>
+                    <td style="width: 15%">수정/삭제</td>
+                </tr>
+            </table>
+            <table th:each="inquiry : ${inquiryList}" style="width: 100%">
+                <colgroup>
+                    <col style="width: 10%;">
+                    <col style="width: 60%;">
+                    <col style="width: 15%;">
+                    <col style="width: 15%>">
+                </colgroup>
+                <tr style="text-align: center;">
+                    <input type="hidden" id="inquiryId" th:value="${inquiry.id}">
+                    <td th:text="${inquiry.createdBy}" style="padding: 5px;"></td>
+                    <td>
+                        <span th:text="${inquiry.content}" class="content-span"></span>
+                        <textarea style="width: 100%; display: none; overflow-y: hidden;" th:text="${inquiry.content}" class="content-input"></textarea>
+                    </td>
+                    <td th:text="${#temporals.format(inquiry.regTime, 'yy-MM-dd hh:mm')}"></td>
+                    <td>
+                        <div class="button-wrapper">
+                            <button type="button" th:attr="onclick='reportInquiry(\'' + ${inquiry.id} + '\')'" class="btn btn-light border border-dark">신고</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:each="inquiryAnswer : ${inquiryAnswerList}" th:if="${inquiryAnswer.inquiry.getId()} == ${inquiry.id}" style="background-color: #FAFAFA; text-align: center;">
+                    <td style="padding: 5px;">판매자</td>
+                    <td>
+                        <span th:text="${inquiryAnswer.content}"
+                              th:class="'content-span-' + ${inquiryAnswer.id}"></span>
+                        <textarea style="width: 100%; display: none; overflow-y: hidden;"
+                                  th:text="${inquiryAnswer.content}"
+                                  th:class="'content-input-' + ${inquiryAnswer.id}"></textarea>
+                    </td>
+                    <td th:text="${#temporals.format(inquiryAnswer.regTime, 'yy-MM-dd hh:mm')}"></td>
+                    <td th:if="${#authentication.principal.nickName == inquiry.createdBy}">
+                        <div class="button-wrapper">
+                            <button type="button" th:attr="onclick='editMode(\'' + ${inquiryAnswer.id} + '\')'"
+                                    th:class="'button-editMode-' + ${inquiryAnswer.id} + ' btn btn-dark'">수정
+                            </button>
+                            <button type="button" style="display: none;"
+                                    th:attr="onclick='updateInquiry(\'' + ${inquiryAnswer.id} + '\')'"
+                                    th:class="'button-update-' + ${inquiryAnswer.id} + ' btn btn-dark'">수정
+                            </button>
+                        </div>
+                        <div class="button-wrapper">
+                            <button type="button" th:attr="onclick='deleteInquiry(\'' + ${inquiryAnswer.id} + '\')'"
+                                    th:class="'button-delete-' + ${inquiryAnswer.id} + ' btn btn-dark'">삭제
+                            </button>
+                            <button type="button" style="display: none;" th:attr="onclick='editModeCancel(\'' + ${inquiryAnswer.id} + '\')'"
+                                    th:class="'button-noneEditMode-' + ${inquiryAnswer.id} + ' btn btn-dark'">취소
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+<!--                답변이 있으면 출력되지 않게-->
+                <tr th:if="${#lists.isEmpty(inquiry.inquiryAnswer) or #lists.size(inquiry.inquiryAnswer) == 0}" style="background-color: lightgray;">
+                    <td>└답변등록</td>
+                    <td colspan="2">
+                        <textarea th:class="'answerContent-' + ${inquiry.id}" style="width: 100%;"></textarea>
+                    </td>
+                    <td>
+                        <div class="button-wrapper">
+                            <button type="button"
+                                    th:onclick="'answerWriter(\'' + ${inquiry.id} + '\', \'' + ${itemFormDto.id} + '\')'" class="button-update btn btn-dark">
+                                등록
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <h5 style="text-align: center; border-radius: 5px; padding: 10px; margin-top: 10px;" class="bg-secondary text-white">상품 리뷰</h5>
+        <div id="reviewList" class="review" style="text-align: left; padding: 10px;">
+            <table th:each="review : ${reviewList}" style="width: 100%; border: 1px solid gray;">
+                <input type="hidden" id="reviewId" th:value="${review.id}">
+                <tr>
+                <span th:each="reviewImg : ${review.reviewImgDtoList}">
+                    <div class="image-container">
+                        <img th:if="${not #strings.isEmpty(reviewImg.imgUrl)}" th:src="${reviewImg.imgUrl}" height="200"
+                             width="50">
+                    </div>
+                </span>
+                </tr>
+                <tr>
+                    <td>
+                    <span style="display: inline-block; font-size: 22px; padding-left: 15px;"
+                          th:text="${review.nickName} "></span>
+                        <span th:text="${#temporals.format(review.regTime, 'yy-MM-dd hh:mm')}"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 15px">
+                        <fieldset class="star-update" style="display: none;">
+                            <input type="radio" class="reviewStarGen" value="5" id="rate1Update"><label
+                                for="rate1Update">★</label>
+                            <input type="radio" class="reviewStarGen" value="4" id="rate2Update"><label
+                                for="rate2Update">★</label>
+                            <input type="radio" class="reviewStarGen" value="3" id="rate3Update"><label
+                                for="rate3Update">★</label>
+                            <input type="radio" class="reviewStarGen" value="2" id="rate4Update"><label
+                                for="rate4Update">★</label>
+                            <input type="radio" class="reviewStarGen" value="1" id="rate5Update"><label
+                                for="rate5Update">★</label>
+                        </fieldset>
+                        <img th:if="${review.star == '5'}" src="/img/reviewFive.png" class="star-editMode" alt="5 stars"
+                             width="100" height="18">
+                        <img th:if="${review.star == '4'}" src="/img/reviewFour.png" class="star-editMode" alt="4 stars"
+                             width="100" height="18">
+                        <img th:if="${review.star == '3'}" src="/img/reviewThree.png" class="star-editMode" alt="3 stars"
+                             width="100" height="18">
+                        <img th:if="${review.star == '2'}" src="/img/reviewTwo.png" class="star-editMode" alt="2 stars"
+                             width="100" height="18">
+                        <img th:if="${review.star == '1'}" src="/img/reviewOne.png" class="star-editMode" alt="1 stars"
+                             width="100" height="18">
+                        <img th:if="${review.star == '0'}" src="/img/reviewZero.png" class="star-editMode" alt="0 stars"
+                             width="100" height="18">
+                        <span>([[${review.star}]]점)</span>
+                    </td>
+                    <td th:if="${#strings.toString(review.createdBy) == #strings.toString(#authentication.principal.idx)}">
+                        <div class="button-wrapper">
+                            <button type="button" class="btn btn-light border border-dark" th:attr="onclick='reportReview(\'' + ${review.id} + '\')'">
+                                신고하기
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5" style="text-align: left; border: 1px gray solid; border-radius: 5px;">
+                        <span th:text="${review.content}" class="content-span" style="padding: 10px;"></span>
+                        <textarea style="width: 100%; display: none; overflow-y: hidden;" th:text="${review.content}"
+                                  class="content-input" name="contentReview" id="contentReview"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <input type="hidden" th:field="*{id}">
+
+<!--        이거 없으면 상품 수정 삭제 안됌-->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+<!--        <div class="form-group">-->
+<!--            <select th:field="*{itemSellStatus}" class="custom-select">-->
+<!--                <option value="SELL">판매중</option>-->
+<!--                <option value="SOLD_OUT">품절</option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <select th:field="*{itemCategory}" class="custom-select">-->
+<!--                <option value="CLOTHES">운동복</option>-->
+<!--                <option value="FOOD">운동 식품</option>-->
+<!--                <option value="EASYFOOD">간편 식품</option>-->
+<!--                <option value="EQUIPMENT">운동 기구</option>-->
+<!--            </select>-->
+<!--        </div>-->
+
+
+<!--        <div class="input-group">-->
+<!--            <div class="input-group-prepend">-->
+<!--                <span class="input-group-text">상품명</span>-->
+<!--            </div>-->
+<!--            <input type="text" th:field="*{itemNm}" class="form-control" placeholder="상품명을 입력해주세요">-->
+<!--        </div>-->
+<!--        <p th:if="${#fields.hasErrors('itemNm')}" th:errors="*{itemNm}" class="fieldError">Incorrect data</p>-->
+
+<!--        <div class="input-group">-->
+<!--            <div class="input-group-prepend">-->
+<!--                <span class="input-group-text">가격</span>-->
+<!--            </div>-->
+<!--            <input type="number" th:field="*{price}" class="form-control" placeholder="상품의 가격을 입력해주세요"-->
+<!--                   onchange="checkCountInput(this)">-->
+<!--            &lt;!&ndash;      <input type="number" th:field="*{price}" class="form-control" placeholder="상품의 가격을 입력해주세요">&ndash;&gt;-->
+<!--        </div>-->
+<!--        <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="fieldError">Incorrect data</p>-->
+
+<!--        <div class="input-group">-->
+<!--            <div class="input-group-prepend">-->
+<!--                <span class="input-group-text">재고</span>-->
+<!--            </div>-->
+<!--            <input type="number" th:field="*{stockNumber}" class="form-control" placeholder="상품의 재고를 입력해주세요"-->
+<!--                   onchange="checkCountInput(this)">-->
+<!--        </div>-->
+<!--        <p th:if="${#fields.hasErrors('stockNumber')}" th:errors="*{stockNumber}" class="fieldError">Incorrect data</p>-->
+
+<!--        <div class="input-group">-->
+<!--            <div class="input-group-prepend">-->
+<!--                <span class="input-group-text">상품 상세 내용</span>-->
+<!--            </div>-->
+<!--            <textarea class="form-control" aria-label="With textarea" th:field="*{itemDetail}"></textarea>-->
+<!--        </div>-->
+<!--        <p th:if="${#fields.hasErrors('itemDetail')}" th:errors="*{itemDetail}" class="fieldError">Incorrect data</p>-->
+
+<!--        <div th:if="${#lists.isEmpty(itemFormDto.itemImgDtoList)}">-->
+<!--            <div class="form-group" th:each="num: ${#numbers.sequence(1,5)}">-->
+<!--                <div class="custom-file img-div">-->
+<!--                    <input type="file" class="custom-file-input" name="itemImgFile">-->
+<!--                    <label class="custom-file-label" th:text="상품이미지 + ${num}"></label>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div th:if="${not #lists.isEmpty(itemFormDto.itemImgDtoList)}">-->
+<!--            <div class="form-group" th:each="itemImgDto, status: ${itemFormDto.itemImgDtoList}">-->
+<!--                <div class="custom-file img-div">-->
+<!--                    <input type="file" class="custom-file-input" name="itemImgFile">-->
+<!--                    &lt;!&ndash;    이건 꼭필요한건인지? 나중에 확인해보기 근데 이것으로 id가 6씩 차이나는 이유임 &ndash;&gt;-->
+<!--                    <input type="hidden" name="itemImgIds" th:value="${itemImgDto.id}">-->
+<!--                    <label class="custom-file-label"-->
+<!--                           th:text="${not #strings.isEmpty(itemImgDto.oriImgName)} ? ${itemImgDto.oriImgName} : '상품이미지' + ${status.index+1}"></label>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div th:if="${#strings.isEmpty(itemFormDto.id)}" style="text-align: center">-->
+<!--            <button th:formaction="@{/member/item/new}" type="submit" class="btn btn-dark">저장</button>-->
+<!--        </div>-->
+<!--        <div th:unless="${#strings.isEmpty(itemFormDto.id)}" style="text-align: center">-->
+<!--            <button th:formaction="@{'/member/item/' + ${itemFormDto.id} }" type="submit" class="btn btn-dark">수정-->
+<!--            </button>-->
+<!--            &lt;!&ndash;      개인적으로 추가한 부분&ndash;&gt;-->
+<!--            <button th:formaction="@{'/member/itemDel/' + ${itemFormDto.id} }" type="submit" class="btn btn-dark">삭제-->
+<!--            </button>-->
+<!--        </div>-->
+<!--        &lt;!&ndash;    이건 꼭필요한건인지? 나중에 확인해보기 &ndash;&gt;-->
+    </form>
+
+</div>
+</html>
+

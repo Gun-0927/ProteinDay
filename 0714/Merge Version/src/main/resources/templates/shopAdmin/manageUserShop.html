@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<th:block layout:fragment="script">
+  <script th:inline="javascript">
+      $(document).ready(function() {
+        $('#shopState').change(function() {
+          const shopState = $(this).val();
+          let url = '/admin/shopUserMgt/0';
+          if (shopState === 'CUSTOMER') {
+            url += '?shopState=CUSTOMER';
+          } else if (shopState === 'SELLER') {
+            url += '?shopState=SELLER';
+          }
+          window.location.href = url;
+        });
+
+         $('.userActivity').click(function (){
+                const selectUser = $(this).val();
+                const url = '/admin/userShopBuyRecord/0?selectUser='+  selectUser
+                window.open(url,'유저 활동 목록','width=1000 height=500,left=150,top=50');
+          });
+      });
+      function findUser(){
+          page(0);
+      }
+
+      function page(page) {
+          var searchBy = $("#searchBy").val();
+          var searchQuery = $("#searchQuery").val();
+
+          var shopState = $('#shopState').val();
+
+          location.href = "/admin/shopUserMgt/" + page + "?shopState=" + shopState + "&" + "searchBy=" + searchBy + "&searchQuery=" + searchQuery;
+      }
+    </script>
+</th:block>
+<body>
+<!-- 메인 부분 -->
+<div class="container-fluid " style="margin-top: 40px;" layout:fragment="content">
+    <div class="row">
+      <div class="col-md-4 text-center h3">
+        쇼핑물 유저 관리
+      </div>
+    </div>
+  <div class="row">
+    <div class="col-10">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center">
+            <div class="row">
+              <div class="col-6 text-center text-white">
+                <a th:href="@{/admin/shopUserMgt/0}">쇼핑물유저 관리</a>
+              </div>
+              <div class="col-6 text-center">
+                <a th:href="@{/admin/shopSellerWaitingMgt/0}">승급유저 관리</a>
+              </div>
+            </div>
+
+            <div class="row" th:object="${searchDto}">
+              <div class="col-md-2 text-center">
+                <select class="form-select form-select-sm" aria-label=".form-select-sm example" id="shopState">
+                  <option value="CUSTOMER" th:selected="${shopState == 'CUSTOMER'}">소비자</option>
+                  <option value="SELLER" th:selected="${shopState == 'SELLER'}">판매자</option>
+                </select>
+              </div>
+              <div class="col-md-2  text-center">
+                <select class="form-select form-select-sm" aria-label=".form-select-sm example"  th:field="*{searchBy}">
+                  <option value="userName" selected>이름</option>
+                  <option value="userId">아이디</option>
+                  <option value="userEmail">이메일</option>
+                </select>
+              </div>
+              <div class="col-md-5  text-center">
+                <input type="text" class="form-control" placeholder="작성해주세용"  th:field="*{searchQuery}" onkeydown="if (event.keyCode === 13) findUser();"/>
+              </div>
+              <div class="col-md-1  text-center">
+                <button class="btn btn-outline-secondary" onclick="findUser()">검색</button>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-2 text-center">
+                유저상태
+              </div>
+              <div class="col-2 text-center">
+                가입일
+              </div>
+              <div class="col-1 text-center">
+                이름
+              </div>
+              <div class="col-1 text-center">
+                아이디
+              </div>
+              <div class="col-2 text-center">
+                이메일
+              </div>
+              <div class="col-2 text-center">
+                상품 등록/구매 수
+              </div>
+              <div class="col-2 text-center">
+                상품 구매/판매 내역
+              </div>
+            </div>
+
+            <div class="row" th:each="members, status : ${member}">
+              <div class="col-2 d-flex align-self-center justify-content-center" th:text="${members.memberStat}">
+                유저상태
+              </div>
+              <div class="col-2 d-flex align-self-center justify-content-center"
+                   th:text="${#temporals.format(members.regTime, 'MM월 dd일 HH:mm:ss')}">
+                날짜
+              </div>
+              <div class="col-1 d-flex align-self-center justify-content-center"
+                   th:text="${members.nickName}">
+                이름
+              </div>
+              <div class="col-1 d-flex align-self-center justify-content-center"
+                   th:text="${members.id}">
+                아이디
+              </div>
+              <div class="col-2 d-flex align-self-center justify-content-center"
+                   th:text="${members.email}">
+                이메일
+              </div>
+              <div class="col-2 d-flex align-self-center justify-content-center" th:text="${itemsNum[__${status.index}__] + '개/ ' + buyItemsNum[__${status.index}__]} +'회'"></div>
+              <div class="col-2 d-flex align-self-center justify-content-center">
+                <button class="btn btn-outline-secondary userActivity" th:value="${members.idx}" >구매/판매<br>상세보기</button>
+              </div>
+            </div>
+            <div class="row" th:if="${member.isEmpty()}">
+              <div class="col-12 text-center">
+                <p>해당 유저는 존재하지 않습니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+          <div class="row ">
+            <div class="col-12 text-center">
+              <div th:with="start=${(member.number/maxPage)*maxPage + 1}, end=(${(member.totalPages == 0) ? 1 : (start + (maxPage - 1) < member.totalPages ? start + (maxPage - 1) : member.totalPages)})" >
+                <ul class="pagination justify-content-center">
+                  <li class="page-item" th:classappend="${member.first}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${member.number - 1} + ')'" aria-label='Previous' class="page-link">
+                      <span aria-hidden='true'>Previous</span>
+                    </a>
+                  </li>
+                  <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${member.number eq page-1}?'active':''">
+                    <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+                  </li>
+                  <li class="page-item" th:classappend="${member.last}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${member.number + 1} + ')'" aria-label='Next' class="page-link">
+                      <span aria-hidden='true'>Next</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- 사이드메뉴 부분 -->
+    <div th:replace="/fragments/admin_side"></div>
+  </div>
+</div>
+</body>
+
+</html>

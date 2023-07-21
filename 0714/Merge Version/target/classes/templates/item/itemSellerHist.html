@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        function page(page) {
+            location.href = "/member/itemSellerHist/" + page;
+        }
+        </th:block>
+    </script>
+</th:block>
+
+
+
+<head>
+    <style>
+        .repImg {
+            width: 100px;
+            height: auto;
+            }
+            .page-link {
+        color: #000;
+        background-color: #fff;
+        border: 1px solid #ccc;
+    }
+
+    .page-item.active .page-link {
+        z-index: 1;
+        color: #555;
+        font-weight:bold;
+        background-color: #f1f1f1;
+        border-color: #ccc;
+    }
+
+    .page-link:focus, .page-link:hover {
+        color: #000;
+        background-color: #fafafa;
+        border-color: #ccc;
+    }
+    </style>
+</head>
+
+
+<div layout:fragment="content">
+    <h2 style="text-align: center; border-radius: 5px; padding: 10px;" class="bg-secondary text-white">
+        상품 판매 내역
+    </h2>
+    <form role="form" method="get" th:object="${orderItems}">
+        <table class="table" style="text-align: center;">
+            <colgroup>
+                <col style="width: 9%;">
+                <col style="width: 9%;">
+                <col style="width: 9%;">
+                <col style="width: 9%;">
+                <col style="width: 9%;">
+                <col style="width: 9%;">
+                <col style="width: 5%;">
+                <col style="width: 9%;">
+                <col style="width: 9%;">
+                <col colspan="3" style="width: 23%;">
+            </colgroup>
+            <thead>
+            <tr>
+                <td>상품 이름</td>
+                <td>상품 이미지</td>
+                <td>구매자 이름</td>
+                <td>구매자 주소</td>
+                <td>구매 시간</td>
+                <td>상품 가격</td>
+                <td>수량</td>
+                <td>매출 금액</td>
+                <td>남은 재고 개수</td>
+                <td colspan="3" >신청 상황</td>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr th:each="item, status: ${orderItems}">
+                <td>
+                    <a th:href="@{'/item/' + ${item.item.id}}" th:text="${itemNms[__${status.index}__]}"></a>
+                </td>
+                <td>
+                    <img th:src="${itemImgList[__${status.index}__]}" class = "rounded repImg" th:alt="${item.id}">
+                </td>
+                <td th:text="${names[__${status.index}__]}"></td>
+                <td th:text="${addresses[__${status.index}__]}"></td>
+                <td th:text="${#temporals.format(item.regTime, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${item.orderPrice}"></td>
+                <td th:text="${item.count}"></td>
+                <td th:text="${item.totalPrice}"></td>
+                <td th:text="${item.stockNumber - item.count}"></td>
+                <td th:if="${item.orderSellerStatus == T(com.blue.bluearchive.constant.OrderSellerStatus).ORDERING}">
+                    <button th:formaction="@{'/item/ordering/' + ${item.id}}" type="submit" class="btn btn-dark">배송 중</button>
+                    <button th:formaction="@{'/item/cancel/' + ${item.id}}" type="submit" class="btn btn-dark">주문 취소</button>
+                </td>
+                <td th:if="${item.orderSellerStatus == T(com.blue.bluearchive.constant.OrderSellerStatus).DELIVERING}">배송 중</td>
+                <td th:if="${item.orderSellerStatus == T(com.blue.bluearchive.constant.OrderSellerStatus).DELIVERED}">배송 완료</td>
+                <td th:if="${item.orderSellerStatus == T(com.blue.bluearchive.constant.OrderSellerStatus).CANCEL}">
+                    주문 취소
+                    <button th:formaction="@{'/item/refund/' + ${item.id}}" type="submit" class="btn btn-dark">환불 신청</button>
+                </td>
+                <td th:if="${item.orderSellerStatus == T(com.blue.bluearchive.constant.OrderSellerStatus).REFUND}">
+                    환불 중
+                </td>
+                <td th:if="${item.orderSellerStatus == T(com.blue.bluearchive.constant.OrderSellerStatus).REFUNDED}">
+                    환불 완료
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+
+
+
+        <div th:with="start=${(orderItems.number/maxPage)*maxPage + 1},end=(${(orderItems.totalPages == 0) ? 1 :
+         (start + (maxPage - 1) < orderItems.totalPages ?
+                     start + (maxPage - 1) : orderItems.totalPages)})" >
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${orderItems.first}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${orderItems.number - 1} + ')'" aria-label='Previous' class="page-link">
+                        <span aria-hidden='true'>≪</span>
+                    </a>
+                </li>
+                <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${orderItems.number eq (page)-1}?'active':''">
+                    <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+                </li>
+                <li class="page-item" th:classappend="${orderItems.last}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${orderItems.number + 1} + ')'" aria-label='Next' class="page-link">
+                        <span aria-hidden='true'>≫</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </form>
+
+</div>
+
+
+</html>
+
+
+
+
+

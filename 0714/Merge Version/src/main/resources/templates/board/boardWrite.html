@@ -1,0 +1,143 @@
+  <!DOCTYPE html>
+  <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+  <head>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+      .thumbnail {
+        position: relative;
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        margin-right: 5px;
+      }
+
+      .thumbnail img {
+        width: 100%;
+        height: 100%;
+      }
+
+      .thumbnail .delete {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        text-align: center;
+        line-height: 20px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+    </style>
+    <script>
+      var fileArr;
+      var fileInfoArr = [];
+
+      // 썸네일 클릭시 삭제
+      function fileRemove(index) {
+        console.log("index: " + index);
+        var thumbnailId = "thumbnail_" + index;
+        var thumbnail = document.getElementById(thumbnailId);
+        thumbnail.parentNode.removeChild(thumbnail); // Remove the thumbnail element from its parent
+
+        // fileInfoArr 배열에서 해당 파일을 검색하여 삭제
+        var fileIndex = -1;
+        for (var i = 0; i < fileInfoArr.length; i++) {
+          if (fileInfoArr[i].thumbnailId === thumbnailId) {
+            fileIndex = i;
+            break;
+          }
+        }
+
+        if (fileIndex !== -1) {
+          fileInfoArr.splice(fileIndex, 1);
+        }
+
+        console.log(fileInfoArr); // 남아있는 파일 목록 출력
+      }
+
+      // 썸네일 미리보기
+      function previewImage(targetObj, viewArea) {
+        var files = targetObj.files;
+        fileArr = Array.prototype.slice.call(files);
+
+        var preview = document.getElementById(viewArea);
+
+        for (var i = 0; i < files.length; i++) {
+          var file = files[i];
+          var thumbnailId = "thumbnail_" + i; // 썸네일 ID
+          fileInfoArr.push({
+            file: file,
+            thumbnailId: thumbnailId // 썸네일 ID 정보 추가
+          });
+
+          var imageType = /image.*/;
+          if (!file.type.match(imageType))
+            continue;
+
+          var thumbnail = document.createElement('div');
+          thumbnail.id = thumbnailId;
+          thumbnail.className = "thumbnail";
+          preview.appendChild(thumbnail);
+
+          var img = document.createElement("img");
+          img.className = "addImg";
+          img.classList.add("obj");
+          img.file = file;
+          img.src = URL.createObjectURL(file);
+          thumbnail.appendChild(img);
+
+          var deleteBtn = document.createElement("div");
+          deleteBtn.className = "delete";
+          deleteBtn.innerHTML = "X";
+          deleteBtn.onclick = (function (index) {
+            return function () {
+              fileRemove(index);
+            };
+          })(i); // 현재 인덱스 값 전달
+          thumbnail.appendChild(deleteBtn);
+
+          if (window.FileReader) {
+            var reader = new FileReader();
+            reader.onloadend = (function (aImg) {
+              return function (e) {
+                aImg.src = e.target.result;
+              };
+            })(img);
+            reader.readAsDataURL(file);
+          }
+        }
+      }
+
+    </script>
+  </head>
+  <body>
+  <div layout:fragment="content">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <div class="row border-bottom" style="margin-top: 10px; margin-bottom: 10px;"></div>
+
+
+      <div style="display: inline;">
+        <label for="img_upload">
+          <img src="/img/photo_add.jpg" style="width:100px; height:100px; cursor: pointer;">
+
+        </label>
+        <input type="file" name="img_upload" id="img_upload" style="display: none" multiple accept="image/*" onchange="previewImage(this,'View_area')">
+
+        <span id='View_area'
+              style='position:relative; color: black; border: 0px solid black;'>
+          </span>
+      </div>
+
+
+      <div id="resultDiv">
+        <p th:text="${log}"></p>
+      </div>
+
+  </div>
+  </body>
+
+  </html>

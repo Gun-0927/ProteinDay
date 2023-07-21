@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+  <meta charset="UTF-8">
+  <title>카테고리 수정</title>
+</head>
+<body>
+<div class="container-fluid " style="margin-top: 40px;" layout:fragment="content" th:object="${categoryDto}">
+  <button type="submit" class="btn btn-outline-info" onclick="location.href='/admin/commMgt'">이전</button>
+  <form method="post" th:action="@{/admin/updateCategory}">
+    <input type="hidden" name="categoryId" th:value="${categoryDto.categoryId}">
+    카테고리 이름<input type="text" name="categoryName" required th:value="${categoryDto.categoryName}"><br>
+    <button type="submit" class="btn btn-outline-info">수정</button>
+  </form>
+  <!-- 중복 에러 처리 -->
+  <div th:if="${param.duplicateError}" class="alert alert-danger mt-3">
+    중복된 카테고리 이름입니다. 다른 이름을 입력해주세요.
+    <span th:if="${param.categoryName}"> (입력된 이름: <strong th:text="${param.categoryName}"></strong>)</span>
+  </div>
+</div>
+</body>
+
+</html>

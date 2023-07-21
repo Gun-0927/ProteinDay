@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>블루아카이브_write</title>
+  <!-- CSS only -->
+  <link rel="stylesheet" href="boot.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <!--드랍다운 버튼-->
+  <style>
+    .dropdown-menu {
+      display: none;
+    }
+
+    .nav-item.dropdown:hover .dropdown-menu {
+      display: block;
+    }
+
+    .container div {
+      border: 0.5px solid black;
+    }
+
+    .container-fluid div {
+      border: 0.5px solid black;
+    }
+
+    .container-fluid>div {
+      border: 0.5px solid black;
+    }
+
+    .side_menu {
+      margin: 5px 0px 5px 0px;
+    }
+  </style>
+
+
+</head>
+
+<body>
+  <!-- 메인 부분 -->
+  <div class="container-fluid " style="margin-top: 40px;" layout:fragment="content">
+    <div class="row gx-0">
+      <div class="row">
+        <div class="col-md-4 text-center h3">
+          <a href="list.html">현재 카테고리이름 표시</a>
+        </div>
+
+      </div>
+
+      <div class="col-10">
+        <div class="container">
+
+          <div class="row">
+            <div class="col-12 text-center">
+              <br><br><br>
+              먼가 넣을수도 있는 공간 또는 디자인을 위한 공백
+              <br><br><br>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-4 text-center">
+              제목
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-1 p-4 text-center">
+              작성자
+            </div>
+            <div class="col-1 p-4 text-center">
+              조회수
+            </div>
+            <div class="col-1 offset-7 p-4 text-center">
+              작성일
+            </div>
+            <div class="col-1 p-4 text-center">
+              수정
+            </div>
+            <div class="col-1 p-4 text-center">
+              삭제
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+              식단 표시 부분
+            </div>
+            <div class="col-2 align-self-center" style="height: 300px;">
+              사진입력, 유튜브 링크
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              식단 + 재료별 키워드 검색하여 작성 <br> (식품데이터 api 활용)
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              식단 영양성분, 칼로리 계산되어 제공
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+              운동 기록 표시 부분
+            </div>
+            <div class="col-2 align-self-center" style="height: 300px;">
+              사진입력, 유튜브 링크
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              운동 종류 키워드 검색 (csv 데이터 활용) <br> 운동 시간 입력
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              소모 칼로리 제공
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+              운동 장소 표시 부분
+            </div>
+            <div class="col-2 align-self-center" style="height: 300px;">
+              사진입력, 유튜브 링크
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              주소 입력 (네이버 주소검색 api)
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+              몸매 변화 표시 부분
+            </div>
+            <div class="col-2 align-self-center" style="height: 300px;">
+              Before 사진들, 유튜브 링크
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              과정 설명, 시간 등등
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              After 사진들, 유튜브 링크
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+              내용 부분
+            </div>
+            <div class="col-12 p-4" style="height: 500px;">
+              본문내용
+            </div>
+          </div>
+
+          <div class="row" style="height: 100px;">
+            <div class="col-1 offset-3 p-4 text-center">추천</div>
+            <div class="col-1 p-4 text-center">추천수</div>
+            <div class="col-1 offset-1 p-4 text-center">비추천</div>
+            <div class="col-1 p-4 text-center">비추천수</div>
+          </div>
+
+          <div class="row">
+            <div class="offset-10 col-2 p-2 text-center">
+              신고
+            </div>
+          </div>
+
+
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+              댓글 부분
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="col-1 p-1">
+              작성자 프로필
+            </div>
+            <div class="col-1 p-1">
+              작성자 닉네임
+            </div>
+            <div class="col-1 p-1 text-center">
+              작성일
+            </div>
+            <div class="col-1 p-1 text-center">
+              수정
+            </div>
+            <div class="col-1 p-1 text-center">
+              삭제
+            </div>
+            <div class="offset-2 col-1 p-1 text-center">
+              추천
+            </div>
+            <div class="col-1 p-1 text-center">
+              추천수
+            </div>
+            <div class="col-1 p-1 text-center">
+              비추천
+            </div>
+            <div class="col-1 p-1 text-center">
+              비추천수
+            </div>
+            <div class="col-1 p-1 text-center">
+              신고
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12 p-4">
+              댓글 내용 1
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="offset-2 col-1 p-1">
+              작성자 프로필
+            </div>
+            <div class="col-1 p-1">
+              작성자 닉네임
+            </div>
+            <div class="col-1 p-1 text-center">
+              작성일
+            </div>
+            <div class="col-1 p-1 text-center">
+              수정
+            </div>
+            <div class="col-1 p-1 text-center">
+              삭제
+            </div>
+            <div class="col-1 p-1 text-center">
+              추천
+            </div>
+            <div class="col-1 p-1 text-center">
+              추천수
+            </div>
+            <div class="col-1 p-1 text-center">
+              비추천
+            </div>
+            <div class="col-1 p-1 text-center">
+              비추천수
+            </div>
+            <div class="col-1 p-1 text-center">
+              신고
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="offset-2 col-10 p-4">
+              대댓글 내용 1 <br><br> 대댓글 작성 활성화 버튼
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="offset-2 col-1 p-1">
+              작성자 닉네임
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="offset-2 col-9 p-4">
+              대댓글 작성 부분
+            </div>
+            <div class="col-1 p-4">
+              <button class="form-control">작성</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12  text-center h5">
+              <a href="#"><<</a> &nbsp&nbsp&nbsp<a href="#"><</a>&nbsp&nbsp&nbsp
+                      <a href="#">1</a>&nbsp <a href="#">2</a>&nbsp <a href="#">3</a>&nbsp <a href="#">4</a>&nbsp <a
+                        href="#">5</a>
+                      <a href="#">></a>&nbsp&nbsp&nbsp <a href="#">>></a>
+            </div>
+          </div>
+
+
+
+          <div class="row">
+            <div class="col-1 p-1">
+              작성자 닉네임
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-11 p-4">
+              댓글 작성 부분
+            </div>
+            <div class="col-1 p-4">
+              <button class="form-control">작성</button>
+            </div>
+          </div>
+
+
+          <div class="row" style="height: 100px;">
+            <br>
+            <div class="col-2 offset-5 p-4">
+              <a href="list.html" class="btn btn-outline-secondary btn-lg">목록</a>
+            </div>
+          </div>
+
+          
+          
+
+        </div>
+      </div>
+      <!-- 사이드메뉴 부분 -->
+      <div class="col-2">
+        <div class="container-fluid" style="border: 1px solid black;">
+
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리1</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리2</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리3</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리4</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리5</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리6</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리7</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리8</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>

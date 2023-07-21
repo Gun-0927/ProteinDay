@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <!-- Include Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+<input type="hidden" id="boardId" th:value="${boardId}" />
+<h4>카테고리 수정</h4>
+<div class="container">
+  <div>
+    현재 카테고리 이름: <input id="currentCategory" type="text" th:value="${categoryName}" readonly />
+  </div>
+  <div>
+    카테고리 선택:
+    <form id="categoryForm">
+      <th:block th:each="category : ${categoryList}">
+        <div>
+          <input type="radio" name="selectedCategory" th:value="${category.categoryId}" />
+          <label th:text="${category.categoryName}" onclick="selectRadio(this)"></label>
+        </div>
+      </th:block>
+    </form>
+  </div>
+  <div>
+    <button id="updateButton" class="btn btn-primary">수정</button>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#updateButton').click(function () {
+      const boardId = $("#boardId").val();
+      const selectedCategory = $('input[name="selectedCategory"]:checked').val();
+      const confirmation = confirm('정말로 카테고리를 변경하시겠습니까?');
+      if (confirmation) {
+        $.ajax({
+          url: '/admin/adminUpdate2/' + selectedCategory + '/' + boardId,
+          type: 'GET',
+          success: function() {
+            // 변경이 완료되면 팝업창을 닫고 부모 페이지를 새로고침
+            window.opener.location.reload();
+            window.close();
+          },
+          error: function() {
+            alert('카테고리 변경에 실패했습니다.');
+          }
+        });
+      }
+    });
+  });
+
+  function selectRadio(label) {
+    const radio = label.previousElementSibling;
+    radio.checked = true;
+  }
+</script>
+</body>
+</html>

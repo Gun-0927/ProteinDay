@@ -1,0 +1,104 @@
+/*링크 밑줄, 기타 표시 제거*/
+a {text-decoration: none;}
+li{list-style: none;}
+
+
+
+/*헤더부분 css*/
+.logo-nav-container .logo {
+    margin-right: 10px;
+    position: fixed;
+  }
+.container1{
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background-color: lightgray;
+  width: 100%;
+  min-height: 0vh;
+}
+.header-container{ /* 헤더 양쪽 여백*/
+    padding-left: 150px; 
+    padding-right: 150px;
+}
+
+
+  
+/*로그인 | 메인페이지*/ 
+#top_menu{
+      position: absolute;
+      top: 3px;
+      right: 250px;
+      color: lightblue;
+    }
+#top_menu a{
+        text-decoration: none;
+    }
+
+#search-input{
+  position: absolute;
+  top: 3px;
+  right: 60px;
+  color: black;
+  border-radius: 5px;
+  border: 1px solid green;
+
+}
+#search-button{
+  position: absolute;
+  top: 3px;
+  right:  10px;
+  color: black;
+  border-radius: 5px;
+}
+
+/*상단 네비게이션바 */
+.nav-item.dropdown{
+    margin: auto;
+    margin-top: 20px;
+}
+.nav-link.dropdown-toggle{
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 7px;
+    background-color: lightgray;
+}
+.nav-item.dropdown:hover .nav-link{
+    background-color:aliceblue;
+   /* transition: 0.7s */
+}
+
+
+/*몸통 부분*/
+
+.container2 {  /*공통 부분*/
+
+}
+
+
+
+
+
+
+/* footer */
+.container3 {
+
+  z-index: 1000;
+  background-color: lightgray;
+  width: 100%;
+  min-height: 1vh;
+}
+
+footer {
+  width: 100%;
+  text-align: center;
+
+}
+
+footer .col {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

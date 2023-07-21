@@ -1,0 +1,14 @@
+<div class="row">
+  <div id="categoryBtn" class="col text-center text-white">
+    <a class="btn btn-outline-primary btn-block" role="button" aria-disabled="true" th:href="@{/admin/commMgt}">카테고리 관리</a>
+  </div>
+  <div id="boardBtn" class="col text-center">
+    <a class="btn btn-outline-primary btn-block" role="button" aria-disabled="true" th:href="@{/admin/boardMgt/0?id=0}">게시물 관리</a>
+  </div>
+  <div id="commentBtn" class="col text-center">
+    <a class="btn btn-outline-primary btn-block" role="button" aria-disabled="true" th:href="@{/admin/commentMgt/0?id=0}">댓글 관리</a>
+  </div>
+  <div class="col text-center">
+    <a id="replyBtn" class="btn btn-outline-primary btn-block" role="button" aria-disabled="true" th:href="@{/admin/commentsCommentMgt/0?id=0}">대댓글 관리</a>
+  </div>
+</div>

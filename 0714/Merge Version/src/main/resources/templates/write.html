@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>블루아카이브_write</title>
+  <!-- CSS only -->
+  <link rel="stylesheet" href="../static/css/boot.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <!--드랍다운 버튼-->
+  <style>
+    .dropdown-menu {
+      display: none;
+    }
+
+    .nav-item.dropdown:hover .dropdown-menu {
+      display: block;
+    }
+
+    .container div{
+      border: 0.5px solid black;
+    }
+    .container-fluid div {
+      border: 0.5px solid black;
+    }
+    .container-fluid>div {
+      border: 0.5px solid black;
+    }
+
+    .side_menu{
+      margin : 5px 0px 5px 0px;
+    }
+  </style>
+
+
+</head>
+
+<body>
+
+  <!--헤더부분-->
+  <div class="container1">
+    <header class="header-container d-flex align-items-center justify-content-center  py-3 mb-4 ">
+      <a href="/static" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+        <svg class="bi me-2" width="70" height="30" role="img" aria-label="Bootstrap">
+          <use xlink:href="#bootstrap" />
+        </svg>
+        <img src="/img/logo.png" alt="이미지_설명">
+      </a>
+      <div id="top_menu">
+        <a href="#">로그인 </a>
+        <a href="#">| 마이페이지</a>
+      </div>
+      <form class="search-form">
+        <input type="text" id="search-input" placeholder="검색어를 입력하세요">
+        <button type="submit" id="search-button">검색</button>
+      </form>
+
+      <!--버튼 드랍다운-->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Home
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" href="#">Submenu 1</a></li>
+          <li><a class="dropdown-item" href="#">Submenu 2</a></li>
+          <li><a class="dropdown-item" href="#">Submenu 3</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Home
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" href="#">Submenu 1</a></li>
+          <li><a class="dropdown-item" href="#">Submenu 2</a></li>
+          <li><a class="dropdown-item" href="#">Submenu 3</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Home
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" href="#">Submenu 1</a></li>
+          <li><a class="dropdown-item" href="#">Submenu 2</a></li>
+          <li><a class="dropdown-item" href="#">Submenu 3</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Home
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" href="#">Submenu 1</a></li>
+          <li><a class="dropdown-item" href="#">Submenu 2</a></li>
+          <li><a class="dropdown-item" href="#">Submenu 3</a></li>
+        </ul>
+      </li>
+    </header>
+  </div>
+
+
+
+
+  <!-- 메인 부분 -->
+  <div class="container-fluid " style="margin-top: 40px;">
+    <div class="row gx-0">
+      <div class="row">
+        <div class="col-md-4 text-center h3">
+          <a href="#">현재 카테고리이름 표시</a>
+        </div>
+        
+      </div>
+
+      <div class="col-10">
+        <div class="container">
+
+          <div class="row">
+            <div class="col-12 text-center">
+              <br><br><br>
+              먼가 넣을수도 있는 공간 또는 디자인을 위한 공백
+              <br><br><br>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h4 col-2 text-center">
+              제목
+            </div>
+            <div class="col-10 text-center">
+              <input type="text" class="form-control"/>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+               식단  작성 예시
+            </div>
+            <div class="col-2 align-self-center" style="height: 300px;">
+              사진입력, 유튜브 링크
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              식단 + 재료별 키워드 검색하여 작성  <br> (식품데이터 api 활용)
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              식단 영양성분, 칼로리 계산되어 제공
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+               운동 기록 작성 예시
+            </div>
+            <div class="col-2 align-self-center" style="height: 300px;">
+              사진입력, 유튜브 링크
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              운동 종류 키워드 검색 (csv 데이터 활용) <br> 운동 시간 입력
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              소모 칼로리 제공
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+               운동 장소 작성 예시
+            </div>
+            <div class="col-2 align-self-center" style="height: 300px;">
+              사진입력, 유튜브 링크
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              주소 입력 (네이버 주소검색 api)
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+               몸매 변화 작성 예시
+            </div>
+            <div class="col-2 align-self-center" style="height: 300px;">
+              Before 사진들, 유튜브 링크
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              과정 설명, 시간 등등
+            </div>
+            <div class="col-2  offset-2 align-self-center" style="height: 300px;">
+              After 사진들, 유튜브 링크
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+               내용
+            </div>
+            <div class="col-12 p-4">
+              <textarea name="" id="" class="form-control" rows="12"></textarea>
+            </div>
+          </div>
+          <div class="row" style="height: 100px;">
+            <br>
+            <div class="col-2 offset-8 p-4">
+              <a href="board/list.html" class="btn btn-outline-secondary btn-lg">작성</a>
+            </div>
+            <div class="col-2 p-4">
+              <a href="board/list.html" class="btn btn-outline-secondary btn-lg">취소</a>
+            </div>
+          </div>
+
+          
+        </div>
+      </div>
+
+
+
+
+
+      <!-- 사이드메뉴 부분 -->
+      <div class="col-2">
+        <div class="container-fluid" style="border: 1px solid black;">
+
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리1</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리2</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리3</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리4</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리5</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리6</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리7</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center side_menu">
+              <a href="#">카테고리8</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+
+
+
+
+  <!--footer 부분-->
+  <div class="container3">
+    <footer>
+      <div class="col mb-3">
+        <a href="/static">
+          <svg class="bi me-2" width="40" height="32">
+            <use xlink:href="#bootstrap" />
+          </svg>
+          <img src="/img/logo.png" alt="이미지_설명">
+        </a>
+        <p class="text-muted">2023 All rights reserved</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

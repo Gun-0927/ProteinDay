@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1}">
+
+<!--<head>-->
+<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+<!--</head>-->
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+    $(document).ready(function(){
+      $("input[name=cartChkBox]").change(function(){
+        getOrderTotalPrice();
+        if($("input[name=cartChkBox]").length == $("input[name=cartChkBox]:checked").length){
+          $("#checkall").prop("checked",true);
+        }else{
+          $("#checkall").prop("checked",false);
+        }
+      });
+    });
+
+
+    function getOrderTotalPrice(){
+      var orderTotalPrice = 0;
+      var orderTotalPrePrice = 0;
+      var discountPrice = 0;
+
+      $("input[name=cartChkBox]:checked").each(function(){
+        var cartItemId = $(this).val();
+        var price = $("#price_"+cartItemId).attr("data-price");
+        var count = $("#count_"+cartItemId).val();
+        var grade = $("#grade").val();
+
+        orderTotalPrePrice += price*count;
+        if (grade == "GOLD") {
+          orderTotalPrice = 0.8 * orderTotalPrePrice;
+        } else if (grade == "SILVER") {
+          orderTotalPrice = 0.9 * orderTotalPrePrice;
+        } else {
+          orderTotalPrice = orderTotalPrePrice;
+        }
+      });
+      orderTotalPrice = orderTotalPrice.toFixed(0);
+      discountPrice = orderTotalPrePrice - orderTotalPrice;
+      $("#orderTotalPrice").html(orderTotalPrice+'원');
+      $("#orderTotalPrePrice").html(orderTotalPrePrice+'원');
+      $("#discountPrice").html(discountPrice+'원');
+
+      return (orderTotalPrice);
+    }
+
+
+    function changeCount(obj){
+      var count = obj.value;
+      var cartItemId = obj.id.split('_')[1];
+      var price = $("#price_" + cartItemId).data("price");
+      var totalPrice = count*price;
+      $("#totalPrice_" + cartItemId).html(totalPrice+"원");
+      getOrderTotalPrice();
+      updateCartItemCount(cartItemId,count);
+    }
+
+    function checkAll(){
+      if($("#checkall").prop("checked")){
+        $("input[name=cartChkBox]").prop("checked",true);
+      }else{
+        $("input[name=cartChkBox]").prop("checked",false);
+      }
+      getOrderTotalPrice();
+    }
+
+    function updateCartItemCount(cartItemId, count){
+      //var token = $("meta[name='_csrf']").attr("content");
+      //var header = $("meta[name='_csrf_header']").attr("content");
+
+      var url = "/shop/cartItem/" + cartItemId+"?count=" + count;
+
+      $.ajax({
+        url      : url,
+        type     : "PATCH",
+        beforeSend : function(xhr){
+        },
+        dataType : "json",
+        cache   : false,
+        success  : function(result, status){
+          console.log("cartItem count update success");
+        },
+        error : function(jqXHR, status, error){
+          if(jqXHR.status == '401'){
+            alert('로그인 후 이용해주세요');
+            location.href='/members/login';
+          } else{
+            alert(jqXHR.responseJSON.message);
+          }
+        }
+      });
+    }
+    function checkCountInput(input) {
+      if (input.value < 1) {
+        input.value = 1;
+      }
+    }
+
+    function deleteCartItem(obj){
+      //var token = $("meta[name='_csrf']").attr("content");
+      //var header = $("meta[name='_csrf_header']").attr("content");
+      console.log(obj);
+      var cartItemId = obj.dataset.id;
+
+      var url = "/shop/cartItem/"+cartItemId;
+
+      $.ajax({
+        url : url,
+        type : "DELETE",
+        beforeSend : function(xhr){ //xmlHttpRequest
+          /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+        },
+        dataType : "json",
+        cache   : false,
+        success  : function(result, status){
+          location.href='/shop/cart';
+        },
+        error : function(jqXHR, status, error){
+
+          if(jqXHR.status == '401'){
+            alert('로그인 후 이용해주세요');
+            location.href='/members/login';
+          } else{
+            alert(jqXHR.responseJSON.message);
+          }
+
+        }
+      });
+    }
+
+    function orders(){
+      //var token = $("meta[name='_csrf']").attr("content");
+      //var header = $("meta[name='_csrf_header']").attr("content");
+
+      var url = "/shop/cart/orders";
+
+      var dataList = new Array();
+      var paramData = new Object();
+      $("input[name=cartChkBox]:checked").each(function(){
+        var cartItemId = $(this).val();
+        var data =new Object();
+        data["cartItemId"]=cartItemId;
+        dataList.push(data);
+      });
+
+      paramData['cartOrderDtoList']=dataList;
+
+      var param = JSON.stringify(paramData);
+
+      $.ajax({
+        url : url,
+        type : "POST",
+        contentType : "application/json",
+        data : param,
+        beforeSend : function(xhr){
+        },
+        dataType : "json",
+        cache   : false,
+        success  : function(result, status){
+          alert("주문이 완료 되었습니다.");
+          location.href='/shop/orders';
+        },
+        error : function(jqXHR, status, error){
+          if(jqXHR.status == '401'){
+            alert('로그인 후 이용해주세요');
+            location.href='/members/login';
+          } else{
+            alert(jqXHR.responseJSON.message);
+          }
+        }
+      });
+    }
+
+
+    </script>
+</th:block>
+
+사용자 CSS 추가
+<th:block layout:fragment="css">
+    <style>
+    .content-mg{
+      margin-left:25%;
+      margin-right:25%;
+      margin-top:2%;
+      margin-bottom:100px;
+    }
+    .repImgDiv{
+      margin-right:15px;
+      margin-left:15px;
+      height:auto;
+    }
+    .repImg{
+      height:100px;
+      width:100px;
+    }
+    .fs18{
+      font-size:18px
+    }
+    .fs24{
+      font-size:24px
+    }
+
+
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+
+    <h2 style="text-align: center; border-radius: 5px; padding: 10px;" class="bg-secondary text-white">
+        장바구니 목록
+    </h2>
+
+    <input type="hidden" id="grade" th:value="${grade}">
+
+    <div>
+
+        <table class="table">
+            <colgroup>
+                <col width="15%"/>
+                <col width="70%"/>
+                <col width="15%"/>
+            </colgroup>
+            <thead>
+            <tr class="text-center">
+                <td>
+                    <input type="checkbox" id="checkall" onclick="checkAll()"> 전체선택
+                </td>
+                <td>상품정보</td>
+                <td>상품금액</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cartItem : ${cartItems}">
+                <td class="text-center align-middle">
+                    <input type="checkbox" name="cartChkBox" th:value="${cartItem.cartItemId}">
+                </td>
+                <td class="d-flex">
+                    <div class="repImgDiv align-self-center">
+                        <img th:src="${cartItem.imgUrl}" class="rounded repImg" th:alt="${cartItem.itemNm}">
+                    </div>
+                    <div class="align-self-center">
+                        <span th:text="${cartItem.itemNm}" class="fs24 font-weight-bold"></span>
+                        <div class="fs18 font-weight-light">
+              <span class="input-group mt-2">
+                <span th:id="'price_' + ${cartItem.cartItemId}"
+                      th:data-price="${cartItem.price}"
+                      th:text="${cartItem.price} + '원'" class="align-self-center mr-2">
+                </span>
+                <input type="number" name="count" th:id="'count_' + ${cartItem.cartItemId}"
+                       th:value="${cartItem.count}" min="1"
+                       onchange="changeCount(this)" oninput="checkCountInput(this)" class="form-control mr-2">
+                <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true" th:data-id="${cartItem.cartItemId}"
+                          onclick="deleteCartItem(this)">&times;</span>
+                </button>
+              </span>
+            </div>
+          </div>
+        </td>
+        <td class="text-center align-middle">
+            <span th:id="'totalPrice_' + ${cartItem.cartItemId}"
+                  name="totalPrice" th:text="${cartItem.price * cartItem.count} + '원'">
+            </span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+        <h2 class="text-center">
+            총 상품 가격 : <span id="orderTotalPrePrice" class="text-danger">0원</span>
+        </h2>
+        <h2 class="text-center">
+            할인 금액 : <span id="discountPrice" class="text-danger">0원</span>
+        </h2>
+        <h2 class="text-center">
+            결재 금액 : <span id="orderTotalPrice" class="text-danger">0원</span>
+        </h2>
+
+        <div class="text-center mt-3">
+<!--            <button type="button" class="btn btn-dark btn-lg" onclick="orders()">주문하기</button>-->
+            <button class="btn btn-dark btn-lg" id="payment-button">주문하기</button>
+        </div>
+
+    </div>
+    <script src="https://js.tosspayments.com/v1"></script>
+    <script>
+    var tossPayments = TossPayments("test_ck_0Poxy1XQL8R6epq5X5987nO5Wmlg");
+    var button = document.getElementById("payment-button");
+    var orderId = new Date().getTime();
+
+    button.addEventListener("click", function () {
+
+      tossPayments.requestPayment('카드', {
+          amount: getOrderTotalPrice(),
+          orderId: orderId,
+          orderName: "장바구니상품",
+          customerName: "이토페"
+        })
+        .then(function (data) {
+          orders();
+        })
+        .catch((error) => {
+          // 에러 처리: 에러 목록을 확인하세요
+          // https://docs.tosspayments.com/reference/error-codes#failurl로-전달되는-에러
+          if (error.code === 'USER_CANCEL') {
+            alert("결제를 취소하였습니다.");
+          } else if (error.code === 'INVALID_CARD_COMPANY') {
+            alert("카드가 유효하지 않습니다.");
+          }
+        });
+
+    });
+
+
+
+    </script>
+</div>
+
+</html>

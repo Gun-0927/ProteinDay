@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  <meta charset="UTF-8">
+  <title>블루아카이브_list</title>
+  <!-- 현재 페이지에 적용할 부트스트랩, 제이쿼리링크 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <!--  현재 페이지에 필요한 최소한의 css-->
+  <link rel="stylesheet" href="boot.css">
+
+
+  <!--  날짜표시를 위한 자바스크립트 함수 (오늘이면 시간 표시, 오늘 아니면 년-월-일 표시 -->
+  <!-- 수정 상세보기는 날짜 다 나오게-->
+  <script th:inline="javascript">
+  // 시간 출력 함수
+
+
+    //대댓글 작성부분 나오게 해주는 토글버튼
+     $(document).ready(function() {
+        $(document).on('click', '.toggle-comment', function(event) {
+            event.preventDefault(); // prevent the default action
+            $(this).closest('.row').closest('.comment-section').next('.hidden-comment').toggle(); // toggle the visibility of the next hidden comment
+        });
+    });
+
+
+    $(document).ready(function() {
+    $('.edit-btn').click(function(event) {
+        event.preventDefault(); // prevent the default action
+
+        // Get the closest comment section.
+        const commentSection = $(this).closest('.comment-section');
+
+        // Find the comment content and form within the comment section.
+        const commentContentDiv = commentSection.find('.comment-content');
+        const formElement = commentSection.find('.comment-edit');
+
+        // Toggle the visibility of the comment content and form.
+        commentContentDiv.toggle();
+        formElement.toggle();
+        if ($(this).text() === '수정') {
+            $(this).text('취소');
+        } else {
+            $(this).text('수정');
+        }
+    });
+});
+
+
+//신고페이지 띄움
+$(document).ready(function() {
+  $('a.report-link').click(function(event) {
+    event.preventDefault(); // prevent the default action
+
+    // Calculate the position of the new window
+    var left = screen.availLeft + 200; // 왼쪽으로 200px 이동
+    var top = screen.availTop + 200; // 위쪽으로 200px 이동
+
+    // Open a new small-sized window at the calculated position
+    window.open($(this).attr('href'), '_blank', 'width=400,height=500,left=' + left + ',top=' + top);
+  });
+});
+
+  function scrollToComment(commentId) {
+    var commentElement = document.getElementById('comment' + commentId);
+    if (commentElement) {
+      commentElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  function scrollToCommentsComment(commentsCommentId) {
+    var commentsCommentElement = document.getElementById('commentsComment' + commentsCommentId);
+    if (commentsCommentElement) {
+      commentsCommentElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+  function handleMove(button) {
+    var type = button.getAttribute('data-type');
+    var id = button.getAttribute('data-id');
+
+    if (type === 'comment') {
+      scrollToComment(id);
+    } else if (type === 'commentscomment') {
+      scrollToCommentsComment(id);
+    }
+  }
+  </script>
+
+</head>
+
+
+
+<body>
+<div layout:fragment="content" class="content" style="">
+  <!--  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">-->
+
+  <!-- 메인 부분 -->
+  <div class="container-fluid " style="margin-top: 40px;">
+    <div class="row gx-0">
+      <div class="row">
+        <div class="col-4 text-center h3">
+          <a href="list.html">현재 카테고리이름 표시fefefe</a>
+        </div>
+      </div>
+
+      <div class="col-10">
+        <div class="container">
+
+          <div class="row">
+            <div class="col-12 text-center">
+              <br><br><br>
+              먼가 넣을수도 있는 공간 또는 디자인을 위한 공백
+              <br><br><br>
+            </div>
+          </div>
+          <span id="boardId" th:text="${board.boardId}" style="display: none"></span>
+          <!--          <span id="idx" th:text="${#authentication.principal.idx}" style="display: none"></span>-->
+          <div class="row">
+            <div class="h3 col-12 p-4" th:text="${board.boardTitle}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-1 p-4 text-center" th:text="${boardCreatedBy}">
+            </div>
+            <div class="col-1 p-4 text-center" th:text="${board.boardCount}">
+            </div>
+            <div class="col-1 offset-7 p-4 text-center">
+              <script th:inline="javascript">
+                var boardTime = /*[[${board.regTime}]]*/ '';
+                var date = new Date(boardTime);
+                var today = new Date();
+                var year = date.getFullYear();
+                var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                var day = ('0' + date.getDate()).slice(-2);
+                var hours = ('0' + (date.getHours())).slice(-2);
+                var minutes = ('0' + date.getMinutes()).slice(-2);
+                var second =('0'+date.getSeconds()).slice(-2);
+                document.write(year+'-'+month + '-' + day + ' '+hours + ':' + minutes + ':'+second);
+              </script>
+            </div>
+            <div class="col-1 p-4 text-center" th:if="${boardCreatedBy == memberNickname}">
+              <a th:href="'/board/Edit/' + ${board.boardId}">수정</a>
+            </div>
+            <div class="col-1 p-4 text-center" th:if="${boardCreatedBy == memberNickname}">
+              <a th:href="'/board/Delete/' + ${board.boardId}" onclick="return confirmDelete()">삭제</a>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+              내용 부분
+            </div>
+            <div th:each="boardImg:${boardFormDto.boardImgDtoList}" style="text-align: center">
+              <img th:src="${boardImg.boardImgUrl}" class="rounded mgb-15" width="500">
+            </div>
+            <pre class="col-12 p-4" style="min-height: 500px;" th:text="${board.boardContent}">
+            </pre>
+          </div>
+
+          <div class="row" style="height: 100px;">
+            <div class="col-2 offset-4 p-4 text-center">
+              <img id="likeImage" th:if="${isLike}" src="/img/selectGood.png" style="height: 50px; cursor: pointer;" onclick="sendBoardLikeHateRequest(true)">
+              <img id="likeImage" th:unless="${isLike}" src="/img/good.png" style="height: 50px; cursor: pointer;" onclick="sendBoardLikeHateRequest(true)">
+              <span id="boardLikeCount" style="margin-left: 5px; font-weight: bold; color: red;" th:text="${board.boardLikeCount}"></span>
+            </div>
+            <div class="col-2 p-4 text-center">
+              <img id="hateImage" th:if="${isHate}" src="/img/selectBad.png" style="height: 50px; cursor: pointer;" onclick="sendBoardLikeHateRequest(false)">
+              <img id="hateImage" th:unless="${isHate}" src="/img/bad.png" style="height: 50px; cursor: pointer;" onclick="sendBoardLikeHateRequest(false)">
+              <span id="boardHateCount" style="margin-left: 5px; font-weight: bold; color: blue;" th:text="${board.boardHateCount}"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="offset-10 col-2 p-2 text-center">
+              <a th:href="'/report/board/' + ${board.boardId}" th:text="'신고+' + ${board.boardReportsCount}" class="report-link" onclick="return checkLogin()"></a>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+              베스트 댓글 부분
+            </div>
+
+
+            <div th:each="row, idx : ${best}" th:with="aa=${bestIsLikeIsHate[idx.index]}">
+              <div class="comment-section">
+                <div class="row">
+                  <div>
+                    베스트 댓글~
+                  </div>
+                  <div class="col-1 p-1">
+                    작성자 프로필
+                  </div>
+                  <div class="col-1 p-1" th:text="${bestCommentCratedBy[__${idx.index}__]}">
+                  </div>
+                  <div class="col-1 p-1 text-center">
+                    <script th:inline="javascript">
+                    var boardTime = /*[[${row[2]}]]*/ '';
+                    var date = new Date(boardTime);
+                    var today = new Date();
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    var day = ('0' + date.getDate()).slice(-2);
+                    var hours = ('0' + (date.getHours())).slice(-2);
+                    var minutes = ('0' + date.getMinutes()).slice(-2);
+                    var second =('0'+date.getSeconds()).slice(-2);
+                    document.write(year+'-'+month + '-' + day + ' '+hours + ':' + minutes + ':'+second);
+                  </script>
+                  </div>
+
+                  <div class="col-1 p-1 text-center" >
+                    <img th:id="'bestLikeCommentImage-'+${row[1]}" th:class="${row[0]}+'-like-btn'" th:if="${row[0] == 'comment'&&aa[0]==true}"  th:data-comment-id="${row[1]}" src="/img/selectGood.png" style="height: 50px; cursor: pointer;" onclick="sendCommentLikeHateRequest(true,event)">
+                    <img th:id="'bestLikeCommentImage-'+${row[1]}" th:class="${row[0]}+'-like-btn'" th:if="${row[0] == 'comment'&&aa[0]==false}"  th:data-comment-id="${row[1]}" src="/img/good.png" style="height: 50px; cursor: pointer;" onclick="sendCommentLikeHateRequest(true,event)">
+                    <img th:id="'bestLikeCommentsCommentImage-'+${row[1]}" th:class="${row[0]}+'-like-btn'" th:if="${row[0] == 'commentscomment'&&aa[0]==true}"  th:data-commentscomment-id="${row[1]}" src="/img/selectGood.png" style="height: 50px; cursor: pointer;" onclick="sendCommentsCommentLikeHateRequest(true,event)">
+                    <img th:id="'bestLikeCommentsCommentImage-'+${row[1]}" th:class="${row[0]}+'-like-btn'" th:if="${row[0] == 'commentscomment'&&aa[0]==false}"  th:data-commentscomment-id="${row[1]}" src="/img/good.png" style="height: 50px; cursor: pointer;" onclick="sendCommentsCommentLikeHateRequest(true,event)">
+                    <span th:class="${row[0]} + '-like-count'" th:id="'best-' + ${row[0]} + '-like-count-' + ${row[1]}"  th:text="${row[7]}"></span>
+
+                  </div>
+
+                  <div class="col-1 p-1 text-center">
+                    <img th:id="'bestHateCommentImage-'+${row[1]}" th:class="${row[0]}+'-hate-btn'" th:if="${row[0] == 'comment'&&aa[1]==true}"  th:data-comment-id="${row[1]}" src="/img/selectBad.png" style="height: 50px; cursor: pointer;" onclick="sendCommentLikeHateRequest(false,event)">
+                    <img th:id="'bestHateCommentImage-'+${row[1]}" th:class="${row[0]}+'-hate-btn'" th:if="${row[0] == 'comment'&&aa[1]==false}"  th:data-comment-id="${row[1]}" src="/img/bad.png" style="height: 50px; cursor: pointer;" onclick="sendCommentLikeHateRequest(false,event)">
+                    <img th:id="'bestHateCommentsCommentImage-'+${row[1]}" th:class="${row[0]}+'-hate-btn'" th:if="${row[0] == 'commentscomment'&&aa[1]==true}"  th:data-commentscomment-id="${row[1]}" src="/img/selectBad.png" style="height: 50px; cursor: pointer;" onclick="sendCommentsCommentLikeHateRequest(false,event)">
+                    <img th:id="'bestHateCommentsCommentImage-'+${row[1]}" th:class="${row[0]}+'-hate-btn'" th:if="${row[0] == 'commentscomment'&&aa[1]==false}"  th:data-commentscomment-id="${row[1]}" src="/img/bad.png" style="height: 50px; cursor: pointer;" onclick="sendCommentsCommentLikeHateRequest(false,event)">
+                    <span th:class="${row[0]} + '-hate-count'" th:id="'best-' + ${row[0]} + '-hate-count-' + ${row[1]}" th:text="${row[6]}"></span>
+                  </div>
+
+                  <div class="row comment-content">
+                    <div class="col-12 p-4" th:text="${row[5]}">
+                      댓글 내용 1 <br><br>
+                    </div>
+                  </div>
+                  <div style="text-align: right">
+                    <button th:attr="data-type=${row[0]}, data-id=${row[1]}" onclick="handleMove(this)">
+                      이동
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+
+          <div class="row">
+            <div class="h3 col-12 p-2">
+              댓글 부분
+            </div>
+          </div>
+
+          <div th:each="comment,status:${commentList}" th:id="'comment' + ${comment.commentId}">
+            <div class="comment-section">
+              <div class="row" >
+                <div class="col-1 p-1">
+                  작성자 프로필
+                </div>
+                <div class="col-1 p-1" th:text="${commentCreatedBy[__${status.index}__]}">
+                </div>
+                <div class="col-1 p-1 text-center">
+                  <script th:inline="javascript">
+                  var boardTime = /*[[${comment.regTime}]]*/ '';
+                  var date = new Date(boardTime);
+                  var today = new Date();
+                  var year = date.getFullYear();
+                  var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                  var day = ('0' + date.getDate()).slice(-2);
+                  var hours = ('0' + (date.getHours())).slice(-2);
+                  var minutes = ('0' + date.getMinutes()).slice(-2);
+                  var second =('0'+date.getSeconds()).slice(-2);
+                  document.write(year+'-'+month + '-' + day + ' '+hours + ':' + minutes + ':'+second);
+                </script>
+                </div>
+                <div class="col-1 p-1 text-center" th:if="${commentCreatedBy[__${status.index}__]== memberNickname}">
+                  <button class="edit-btn">수정</button>
+                </div>
+                <div class="col-1 p-1 text-center"th:if="${commentCreatedBy[__${status.index}__]== memberNickname}">
+                  <form method="post" action="/comment/delete" onsubmit="return confirmDelete()">
+                    <input type="hidden" name="boardId" th:value="${board.boardId}">
+                    <input type="hidden" name="commentId" th:value="${comment.commentId}">
+                    <!--                  <span id="commentId" th:text="${comment.commentId}" style="display: none"></span>-->
+                    <button type="submit">삭제</button>
+                  </form>
+                </div>
+
+                <div class="col-1 p-1 text-center">
+                  <img th:id="'likeCommentImage-'+${comment.commentId}" class="comment-like-btn" th:if="${comment.commentIsLike}" src="/img/selectGood.png" style="height: 50px; cursor: pointer;" th:data-comment-id="${comment.commentId}" onclick="sendCommentLikeHateRequest(true,event)">
+                  <img th:id="'likeCommentImage-'+${comment.commentId}" class="comment-like-btn" th:unless="${comment.commentIsLike}" src="/img/good.png" style="height: 50px; cursor: pointer;" th:data-comment-id="${comment.commentId}" onclick="sendCommentLikeHateRequest(true,event)">
+                  <span class="comment-like-count" th:id="'comment-like-count-' + ${comment.commentId}"  style="margin-left: 5px; font-weight: bold; color: red;"th:text="${comment.commentLikeCount}" ></span>
+                </div>
+                <div class="col-1 p-1 text-center">
+                  <img th:id="'hateCommentImage-'+${comment.commentId}" class="comment-hate-btn" th:if="${comment.commentIsHate}" src="/img/selectBad.png" style="height: 50px; cursor: pointer;" th:data-comment-id="${comment.commentId}" onclick="sendCommentLikeHateRequest(false,event)">
+                  <img th:id="'hateCommentImage-'+${comment.commentId}" class="comment-hate-btn" th:unless="${comment.commentIsHate}" src="/img/bad.png" style="height: 50px; cursor: pointer;" th:data-comment-id="${comment.commentId}" onclick="sendCommentLikeHateRequest(false,event)">
+                  <span class="comment-hate-count" th:id="'comment-hate-count-' + ${comment.commentId}"  style="margin-left: 5px; font-weight: bold; color: blue;"th:text="${comment.commentHateCount}" ></span>
+                </div>
+
+
+                <!--              <div class="col-1 p-1 text-center">-->
+                <!--                <button class="comment-like-btn" th:data-comment-id="${comment.commentId}">좋아요</button>-->
+                <!--                <span class="comment-like-count" th:id="'comment-like-count-' + ${comment.commentId}" th:text="${comment.commentLikeCount}"></span>-->
+                <!--              </div>-->
+
+                <!--              <div class="col-1 p-1 text-center">-->
+                <!--                <button class="comment-hate-btn" th:data-comment-id="${comment.commentId}">싫어요</button>-->
+                <!--                <span class="comment-hate-count" th:id="'comment-hate-count-' + ${comment.commentId}" th:text="${comment.commentHateCount}"></span>-->
+                <!--              </div>-->
+                <div class="col-1 p-1 text-center">
+                  <a th:href="'/report/comment/' + ${comment.commentId}" th:text="'신고('+${comment.commentReportsCount}+')'" class="report-link" onclick="return checkLogin()"></a>
+                </div>
+              </div>
+
+              <div class="row comment-content">
+                <div class="col-12 p-4" th:text="${comment.commentContent}">
+                  댓글 내용 1 <br><br>
+                </div>
+              </div>
+              <form role="form" method="post" action="/comment/edit" class="comment-edit" style="display:none"  th:data-comment-update="${comment.commentId}" onsubmit="return checkCommentUpdateContent()">
+                <input type="hidden" name="boardId" th:value="${board.boardId}"/>
+                <input type="hidden" name="commentId" th:value="${comment.commentId}" />
+                <div class="row">
+                  <div class="col-10 p-4">
+                    <textarea th:id="'commentContent'+${comment.commentId}" name="commentContent"class="form-control" rows="4" th:text="${comment.commentContent}"></textarea>
+                  </div>
+                  <div class="col-1 p-4">
+                    <button type="submit" class="form-control">수정</button>
+                  </div>
+                </div>
+              </form>
+              <div class="row">
+                <div class="col-12 ">
+                  <a href="#" class="toggle-comment">대댓글 작성</a>
+                </div>
+              </div>
+            </div>
+
+
+
+
+            <div class="hidden-comment" style="display:none" >
+              <form role="form" method="post" action="/commentsComment/new" th:data-commentscomment-new="${comment.commentId}"onsubmit="return checkCommentsCommentContent()">
+                <input type="hidden" name="comment" th:value="${comment.commentId}"/>
+                <div class="row">
+                  <div class="offset-2 col-9 p-4">
+                    <textarea th:id="'newCommentsCommentContent'+${comment.commentId}" name="commentsCommentContent"  class="form-control" rows="4" placeholder="대댓글작성부분" onclick="checkLogin()"></textarea>
+                  </div>
+                  <div class="col-1 p-4">
+                    <button type="submit" class="form-control" >작성</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+
+            <div class="comment-section" th:each="commentsComment,status:${commentsCommentMap.get(comment.commentId)}" th:id="'commentsComment' + ${commentsComment.commentsCommentId}">
+              <div class="row">
+                <div class="offset-2 col-1 p-1">
+                  작성자 프로필
+                </div>
+                <div class="col-1 p-1" th:text="${commentsCommentCreatedBy[__${status.index}__]}">
+                </div>
+                <div class="col-1 p-1 text-center">
+                  <script th:inline="javascript">
+                    var boardTime = /*[[${commentsComment.regTime}]]*/ '';
+                    var date = new Date(boardTime);
+                    var today = new Date();
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    var day = ('0' + date.getDate()).slice(-2);
+                    var hours = ('0' + (date.getHours())).slice(-2);
+                    var minutes = ('0' + date.getMinutes()).slice(-2);
+                    var second =('0'+date.getSeconds()).slice(-2);
+                    document.write(year+'-'+month + '-' + day + ' '+hours + ':' + minutes + ':'+second);
+                  </script>
+                </div>
+                <div class="col-1 p-1 text-center" th:if="${commentsCommentCreatedBy[__${status.index}__]== memberNickname}">
+                  <button class="edit-btn">수정</button>
+                </div>
+                <div class="col-1 p-1 text-center"th:if="${commentsCommentCreatedBy[__${status.index}__]== memberNickname}">
+                  <form method="post" action="/commentsComment/delete" onsubmit="return confirmDelete()">
+                    <input type="hidden" name="boardId" th:value="${board.boardId}">
+                    <input type="hidden" name="commentsCommentId" th:value="${commentsComment.commentsCommentId}">
+                    <span id="commentsCommentId" th:text="${commentsComment.commentsCommentId}" style="display: none"></span>
+                    <button type="submit">삭제</button>
+                  </form>
+                </div>
+                <div class="col-1 p-1 text-center">
+                  <img th:id="'likeCommentsCommentImage-'+${commentsComment.commentsCommentId}" class="commentscomment-like-btn" th:if="${commentsComment.commentsCommentIsLike}" src="/img/selectGood.png" style="height: 50px; cursor: pointer;" th:data-commentscomment-id="${commentsComment.commentsCommentId}" onclick="sendCommentsCommentLikeHateRequest(true,event)">
+                  <img th:id="'likeCommentsCommentImage-'+${commentsComment.commentsCommentId}" class="commentscomment-like-btn" th:unless="${commentsComment.commentsCommentIsLike}" src="/img/good.png" style="height: 50px; cursor: pointer;" th:data-commentscomment-id="${commentsComment.commentsCommentId}" onclick="sendCommentsCommentLikeHateRequest(true,event)">
+                  <span class="commentscomment-like-count" th:id="'commentscomment-like-count-' + ${commentsComment.commentsCommentId}"  style="margin-left: 5px; font-weight: bold; color: red;"th:text="${commentsComment.commentsCommentLikeCount}" ></span>
+                </div>
+                <div class="col-1 p-1 text-center">
+                  <img th:id="'hateCommentsCommentImage-'+${commentsComment.commentsCommentId}" class="commentscomment-hate-btn" th:if="${commentsComment.commentsCommentIsHate}" src="/img/selectBad.png" style="height: 50px; cursor: pointer;" th:data-commentscomment-id="${commentsComment.commentsCommentId}" onclick="sendCommentsCommentLikeHateRequest(false,event)">
+                  <img th:id="'hateCommentsCommentImage-'+${commentsComment.commentsCommentId}" class="commentscomment-hate-btn" th:unless="${commentsComment.commentsCommentIsHate}" src="/img/bad.png" style="height: 50px; cursor: pointer;" th:data-commentscomment-id="${commentsComment.commentsCommentId}" onclick="sendCommentsCommentLikeHateRequest(false,event)">
+                  <span class="commentscomment-hate-count" th:id="'commentscomment-hate-count-' + ${commentsComment.commentsCommentId}"  style="margin-left: 5px; font-weight: bold; color: blue;"th:text="${commentsComment.commentsCommentHateCount}" ></span>
+                </div>
+                <!--                <div class="col-1 p-1 text-center">-->
+                <!--                  <button class="commentscomment-like-btn" th:data-commentscomment-id="${commentsComment.commentsCommentId}">좋아요</button>-->
+                <!--                  <span class="commentscomment-like-count" th:id="'commentscomment-like-count-' + ${commentsComment.commentsCommentId}" th:text="${commentsComment.commentsCommentLikeCount}"></span>-->
+                <!--                </div>-->
+
+                <!--                <div class="col-1 p-1 text-center">-->
+                <!--                  <button class="commentscomment-hate-btn" th:data-commentscomment-id="${commentsComment.commentsCommentId}">싫어요</button>-->
+                <!--                  <span class="commentscomment-hate-count" th:id="'commentscomment-hate-count-' + ${commentsComment.commentsCommentId}" th:text="${commentsComment.commentsCommentHateCount}"></span>-->
+                <!--                </div>-->
+                <div class="col-1 p-1 text-center">
+                  <a th:href="'/report/commentsComment/' + ${commentsComment.commentsCommentId}" th:text="'신고('+${commentsComment.commentsCommentReportsCount}+')'" class="report-link" onclick="return checkLogin()"></a>
+                </div>
+              </div>
+
+              <div class="row comment-content">
+                <div class="offset-2 col-10 p-4" th:text="${commentsComment.commentsCommentContent}">
+                  대댓글 내용 1
+                </div>
+              </div>
+              <form role="form" method="post" action="/commentsComment/edit" class="comment-edit" style="display:none"th:data-commentscomment-update="${commentsComment.commentsCommentId}" onsubmit="return checkCommentsCommentUpdateContent()">
+                <input type="hidden" name="boardId" th:value="${board.boardId}"/>
+                <input type="hidden" name="commentsCommentId" th:value="${commentsComment.commentsCommentId}"/>
+                <div class="row">
+                  <div class="offset-2 col-9 p-4">
+                    <textarea th:id="'commentsCommentContent'+${commentsComment.commentsCommentId}"name="commentsCommentContent" class="form-control" rows="4" th:text="${commentsComment.commentsCommentContent}"></textarea>
+                  </div>
+                  <div class="col-1 p-4">
+                    <button type="submit" class="form-control">수정</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+          </div>
+
+          <!--          <div class="row">-->
+          <!--            <div class="col-md-12  text-center h5">-->
+          <!--              <a href="#"><img src="/img/left-arrow2.svg" style="width: 15px; height: 15px;"/></a> &nbsp&nbsp&nbsp-->
+          <!--              <a href="#"><img src="/img/left-arrow.svg" style="width: 15px; height: 15px;"/></a>&nbsp&nbsp&nbsp-->
+          <!--              <a href="#">1</a>&nbsp <a href="#">2</a>&nbsp <a href="#">3</a>&nbsp <a href="#">4</a>&nbsp <a-->
+          <!--                    href="#">5</a>&nbsp&nbsp&nbsp-->
+          <!--              <a href="#"><img src="/img/right-arrow.svg" style="width: 15px; height: 15px;"/></a>&nbsp&nbsp&nbsp-->
+          <!--              <a href="#"><img src="/img/right-arrow2.svg" style="width: 15px; height: 15px;"/></a>-->
+          <!--            </div>-->
+          <!--          </div>-->
+
+
+
+
+          <form role="form" method="post" action="/comment/new" onsubmit="return checkCommentContent()">
+            <input type="hidden" name="boardId" th:value="${board.boardId}"/>
+            <div class="row">
+              <div class="col-10 p-4">
+                <textarea id="newCommentContent" name="commentContent" class="form-control" rows="4" placeholder="댓글작성부분" onclick="checkLogin()"></textarea>
+              </div>
+              <div class="col-1 p-4">
+                <button type="submit" class="form-control">작성</button>
+              </div>
+            </div>
+          </form>
+
+
+          <div class="row" style="height: 100px;">
+            <br>
+            <div class="col-2 offset-5 p-4">
+              <a th:href="'/board/'+${board.category.getCategoryId()}" class="btn btn-outline-secondary btn-lg">목록</a>
+            </div>
+          </div>
+
+
+
+
+        </div>
+      </div>
+
+
+
+
+
+      <!-- 사이드메뉴 부분 -->
+      <!-- 사이드메뉴 부분 -->
+      <script  th:inline="javascript">
+          function submitForm(categoryId) {
+              var url = "/board/" + categoryId;
+              window.location.href = url;
+          }
+          //댓글 대댓글 로그인 체크
+          function checkLogin() {
+            var memberIdx = /*[[${memberIdx}]]*/ null;
+            if (memberIdx==null) {
+              var originalUrl = window.location.href; // 현재 페이지의 URL을 가져옴
+              alert("로그인 해주세요.")
+              window.location.href = "/member/login?returnUrl=" + encodeURIComponent(originalUrl);
+              return false;
+            }
+            return true;
+          }
+          //댓글 유효성 검사
+          function checkCommentContent() {
+            var commentContent = document.getElementById("newCommentContent").value.trim();
+            var loggedIn = checkLogin();
+            if (!loggedIn) {
+              return false;
+            }
+            if (commentContent === "") {
+              alert( "댓글 내용을 입력해주세요.") ;
+              return false;
+            }
+
+            return true;
+          }
+          //댓글 수정 유효성 검사
+          function checkCommentUpdateContent(){
+            var commentId = $(event.target).data('comment-update');
+            var commentContent = document.getElementById("commentContent" + commentId).value.trim();
+            if (commentContent === "") {
+              alert( "댓글 내용을 입력해주세요.") ;
+              return false;
+            }
+            return true;
+          }
+          //대댓글 유효성 검사
+          function checkCommentsCommentContent() {
+            var commentId = $(event.target).data('commentscomment-new');
+            var commentsCommentContent = document.getElementById("newCommentsCommentContent"+commentId).value.trim();
+            var loggedIn = checkLogin();
+            if (!loggedIn) {
+              return false;
+            }
+
+            if (commentsCommentContent === "") {
+              alert( "대댓글 내용을 입력해주세요.") ;
+              return false;
+            }
+
+            return true;
+          }
+          //대댓글 수정 유효성 검사
+          function checkCommentsCommentUpdateContent(){
+            var commentsCommentId = $(event.target).data('commentscomment-update');
+            var commentsCommentContent = document.getElementById("commentsCommentContent" + commentsCommentId).value.trim();
+            if (commentsCommentContent === "") {
+              alert( "대댓글 내용을 입력해주세요.") ;
+              return false;
+            }
+            return true;
+          }
+          //삭제 확인 메세지
+          function confirmDelete() {
+            return confirm("삭제하시겠습니까?");
+          }
+          // 좋아요 또는 싫어요 Ajax 요청 전송 함수
+          function sendBoardLikeHateRequest(isLike) {
+            var boardId = document.getElementById("boardId").textContent;
+            var memberIdx = /*[[${memberIdx}]]*/ null;
+            // var token = $("meta[name='_csrf']").attr("content");
+            // var header = $("meta[name='_csrf_header']").attr("content");
+            var likeImage = document.getElementById("likeImage");
+            var hateImage = document.getElementById("hateImage");
+
+            if (memberIdx === null) {
+              // 로그인되지 않은 상태이므로 로그인 창으로 리다이렉트
+              var originalUrl = window.location.href; // 현재 페이지의 URL을 가져옴
+              window.location.href = "/member/login?returnUrl=" + encodeURIComponent(originalUrl);
+              alert("로그인 해주세요.")
+              return; // 리다이렉트 후 함수를 종료
+            }
+            if(likeImage.src.includes("selectGood.png")&&isLike){
+              if(confirm("좋아요를 취소하시겠습니까?")){
+
+              }else{
+                return;
+              }
+
+            }
+            if(hateImage.src.includes("selectBad.png")&&!isLike){
+              if(confirm("싫어요를 취소하시겠습니까?")){
+
+              }else{
+                return;
+              }
+
+            }
+
+            var request = {
+              boardId: boardId,
+              idx: memberIdx,
+              like: isLike,
+              hate: !isLike
+            };
+
+            // Ajax 요청 보내기
+            $.ajax({
+              type: "POST",
+              url: "/boardlikeHate",
+              contentType: "application/json",
+              data: JSON.stringify(request),
+              // beforeSend: function(xhr) {
+              //   xhr.setRequestHeader(header, token);
+              // },
+              success: function(response) {
+                // 요청 처리 성공 시, 응답 처리
+                if (isLike && response.hate) {
+                  alert("이미 싫어요를 선택하셨습니다.");
+                  return;
+                }
+                if (!isLike && response.like) {
+                  alert("이미 좋아요를 선택하셨습니다.");
+                  return;
+                }
+
+                updateBoardLikeHateCounts(response);
+
+
+              },
+              error: function(error) {
+                // 요청 처리 실패 시, 에러 처리
+                console.log("Error:", error);
+              }
+            });
+          }
+          // 응답 데이터를 업데이트하는 함수
+          function updateBoardLikeHateCounts(response) {
+            document.getElementById("boardLikeCount").textContent = response.likeCount;
+            document.getElementById("boardHateCount").textContent = response.hateCount;
+            // 이미지 변경 로직
+            var likeImage = document.getElementById("likeImage");
+            var hateImage = document.getElementById("hateImage");
+
+
+            if (response.like) {
+              likeImage.src = "/img/selectGood.png"; // 채워진 좋아요 이미지 경로로 변경
+            } else {
+              likeImage.src = "/img/good.png"; // 비어진 좋아요 이미지 경로로 변경
+            }
+
+            // 싫어요 이미지 변경 로직 추가
+            if (response.hate) {
+              hateImage.src = "/img/selectBad.png";;
+            } else {
+              hateImage.src = "/img/bad.png";
+            }
+
+          }
+
+          //댓글부분
+          // 좋아요 싫어요 버튼 클릭 이벤트 핸들러
+          // $(document).ready(function() {
+          //   $('.comment-like-btn').click(function(event) {
+          //     var commentId = $(this).data('comment-id');
+          //     sendCommentLikeHateRequest(commentId, true);
+          //   });
+          //
+          //   $('.comment-hate-btn').click(function(event) {
+          //     var commentId = $(this).data('comment-id');
+          //     sendCommentLikeHateRequest(commentId, false);
+          //   });
+          // });
+          function sendCommentLikeHateRequest(isLike, event) {
+            var commentId = $(event.target).data('comment-id');
+              var memberIdx = /*[[${memberIdx}]]*/ null;
+            var likeImage = document.getElementById("likeCommentImage-"+commentId);
+            var hateImage = document.getElementById("hateCommentImage-"+commentId);
+              if (memberIdx === null) {
+                // 로그인되지 않은 상태이므로 로그인 창으로 리다이렉트
+                var originalUrl = window.location.href; // 현재 페이지의 URL을 가져옴
+                window.location.href = "/member/login?returnUrl=" + encodeURIComponent(originalUrl);
+                alert("로그인 해주세요.")
+                return; // 리다이렉트 후 함수를 종료
+              }
+              if(likeImage.src.includes("selectGood.png")&&isLike){
+                if(confirm("좋아요를 취소하시겠습니까?")){
+
+                }else{
+                  return;
+                }
+              }
+
+            if(hateImage.src.includes("selectBad.png")&&!isLike){
+              if(confirm("싫어요를 취소하시겠습니까?")){
+
+              }else{
+                return;
+              }
+            }
+
+              var request = {
+                commentId: commentId,
+                idx: memberIdx,
+                like: isLike,
+                hate: !isLike
+              };
+              $.ajax({
+                type: "POST",
+                url: "/commentlikeHate",
+                contentType: "application/json",
+                data: JSON.stringify(request),
+                success: function(response) {
+                  if (isLike && response.hate) {
+                    alert("이미 싫어요를 선택하셨습니다.");
+                    return;
+                  }
+                  if (!isLike && response.like) {
+                    alert("이미 좋아요를 선택하셨습니다.");
+                    return;
+                  }
+                  updateCommentLikeHateCounts(commentId, response.likeCount, response.hateCount,response);
+                },
+                error: function(error) {
+                  console.log("Error:", error);
+                }
+              });
+            }
+
+            function updateCommentLikeHateCounts(commentId, likeCount, hateCount,response) {
+              var likeCountElement = document.getElementById("comment-like-count-" + commentId);
+              likeCountElement.textContent = likeCount;
+
+              var bestLikeCountElement = document.getElementById("best-comment-like-count-" + commentId);
+              if (bestLikeCountElement) {
+                bestLikeCountElement.textContent = likeCount;
+              }
+
+              var hateCountElement = document.getElementById("comment-hate-count-" + commentId);
+              hateCountElement.textContent = hateCount;
+
+              var bestHateCountElement = document.getElementById("best-comment-hate-count-" + commentId);
+              if (bestHateCountElement) {
+                bestHateCountElement.textContent = hateCount;
+              }
+              // 이미지 변경 로직
+              var likeImage = document.getElementById("likeCommentImage-"+commentId);
+              var bestLikeImage = document.getElementById("bestLikeCommentImage-"+commentId);
+              var hateImage = document.getElementById("hateCommentImage-"+commentId);
+              var bestHateImage = document.getElementById("bestHateCommentImage-"+commentId);
+
+
+              if (response.like) {
+                likeImage.src = "/img/selectGood.png"; // 채워진 좋아요 이미지 경로로 변경
+                if(bestLikeImage){
+                  bestLikeImage.src= "/img/selectGood.png";
+                }
+              } else {
+                likeImage.src = "/img/good.png"; // 비어진 좋아요 이미지 경로로 변경
+                if(bestLikeImage){
+                  bestLikeImage.src = "/img/good.png";
+                }
+              }
+
+              // 싫어요 이미지 변경 로직 추가
+              if (response.hate) {
+                hateImage.src = "/img/selectBad.png";
+                if(bestHateImage){
+                  bestHateImage.src = "/img/selectBad.png";
+                }
+              } else {
+                hateImage.src = "/img/bad.png";
+                if(bestHateImage){
+                  bestHateImage.src="/img/bad.png";
+                }
+              }
+
+            }
+
+          //대댓글부분
+          // 좋아요 싫어요 버튼 클릭 이벤트 핸들러
+          // $(document).ready(function() {
+          //   $('.commentscomment-like-btn').click(function(event) {
+          //     var commentsCommentId = $(this).data('commentscomment-id');
+          //     sendCommentsCommentLikeHateRequest(commentsCommentId, true);
+          //   });
+          //
+          //   $('.commentscomment-hate-btn').click(function(event) {
+          //     var commentsCommentId = $(this).data('commentscomment-id');
+          //     sendCommentsCommentLikeHateRequest(commentsCommentId, false);
+          //   });
+          // });
+            function sendCommentsCommentLikeHateRequest(isLike,event) {
+              var commentsCommentId = $(event.target).data('commentscomment-id');
+              var memberIdx = /*[[${memberIdx}]]*/ null;
+              var likeImage = document.getElementById("likeCommentsCommentImage-"+commentsCommentId);
+              var hateImage = document.getElementById("hateCommentsCommentImage-"+commentsCommentId);
+              if (memberIdx === null) {
+                // 로그인되지 않은 상태이므로 로그인 창으로 리다이렉트
+                var originalUrl = window.location.href; // 현재 페이지의 URL을 가져옴
+                window.location.href = "/member/login?returnUrl=" + encodeURIComponent(originalUrl);
+                alert("로그인 해주세요.")
+                return; // 리다이렉트 후 함수를 종료
+              }
+              if(likeImage.src.includes("selectGood.png")&&isLike){
+                if(confirm("좋아요를 취소하시겠습니까?")){
+
+                }else{
+                  return;
+                }
+              }
+
+              if(hateImage.src.includes("selectBad.png")&&!isLike){
+                if(confirm("싫어요를 취소하시겠습니까?")){
+
+                }else{
+                  return;
+                }
+              }
+
+              var request = {
+                commentsCommentId: commentsCommentId,
+                idx: memberIdx,
+                like: isLike,
+                hate: !isLike
+              };
+
+              $.ajax({
+                type: "POST",
+                url: "/commentsCommentlikeHate",
+                contentType: "application/json",
+                data: JSON.stringify(request),
+                success: function(response) {
+                  if (isLike && response.hate) {
+                    alert("이미 싫어요를 선택하셨습니다.");
+                    return;
+                  }
+                  if (!isLike && response.like) {
+                    alert("이미 좋아요를 선택하셨습니다.");
+                    return;
+                  }
+                  updateCommentsCommentLikeHateCounts(commentsCommentId, response.likeCount, response.hateCount,response);
+                },
+                error: function(error) {
+                  console.log("Error:", error);
+                }
+              });
+            }
+
+            function updateCommentsCommentLikeHateCounts(commentsCommentId, likeCount, hateCount,response) {
+              var likeCountElement = document.getElementById("commentscomment-like-count-" + commentsCommentId);
+              likeCountElement.textContent = likeCount;
+
+              var bestLikeCountElement = document.getElementById("best-commentscomment-like-count-" + commentsCommentId);
+              if (bestLikeCountElement) {
+                bestLikeCountElement.textContent = likeCount;
+              }
+
+              var hateCountElement = document.getElementById("commentscomment-hate-count-" + commentsCommentId);
+              hateCountElement.textContent = hateCount;
+
+              var bestHateCountElement = document.getElementById("best-commentscomment-hate-count-" + commentsCommentId);
+              if (bestHateCountElement) {
+                bestHateCountElement.textContent = hateCount;
+              }
+              // 이미지 변경 로직
+              var likeImage = document.getElementById("likeCommentsCommentImage-"+commentsCommentId);
+              var bestLikeImage = document.getElementById("bestLikeCommentsCommentImage-"+commentsCommentId);
+              var hateImage = document.getElementById("hateCommentsCommentImage-"+commentsCommentId);
+              var bestHateImage = document.getElementById("bestHateCommentsCommentImage-"+commentsCommentId);
+
+
+              if (response.like) {
+                likeImage.src = "/img/selectGood.png"; // 채워진 좋아요 이미지 경로로 변경
+                if(bestLikeImage){
+                  bestLikeImage.src="/img/selectGood.png";
+                }
+              } else {
+                likeImage.src = "/img/good.png"; // 비어진 좋아요 이미지 경로로 변경
+                if(bestLikeImage){
+                  bestLikeImage.src="/img/good.png";
+                }
+              }
+
+              // 싫어요 이미지 변경 로직 추가
+              if (response.hate) {
+                hateImage.src = "/img/selectBad.png";
+                if(bestHateImage){
+                  bestHateImage.src= "/img/selectBad.png";
+                }
+              } else {
+                hateImage.src = "/img/bad.png";
+                if(bestHateImage){
+                  bestHateImage.src= "/img/bad.png";
+                }
+              }
+
+            }
+
+      </script>
+      <div class="col-2">
+        <div class="container-fluid" style="border: 1px solid black;">
+          <form method="get" action="/board/all">
+            <div class="row">
+              <div class="col-md-12 text-center side_menu">
+                <button type="submit">전체보기</button>
+              </div>
+              <div class="col-md-12 text-center side_menu"  th:each="category : ${categoryList}">
+                <button type="button" name="category" th:onclick="'submitForm(' + ${category.categoryId} + ')'">
+                  <span th:text="${category.categoryName}"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+
+
+
+
+
+    </div>
+  </div>
+
+</div>
+</div>
+</body>
+
+
+
+</html>

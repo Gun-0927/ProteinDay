@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{layouts/layout1}">
+<!--<head>-->
+<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+<!--</head>-->
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+
+        $(document).ready(function()
+        {
+            calculateTotalPrice();
+            calculatePreTotalPrice();
+            $("#count").change(function() {
+                calculatePreTotalPrice();
+                calculateTotalPrice();
+            });
+        });
+
+        function calculatePreTotalPrice(){
+            var count = $("#count").val();
+            var price = $("#price").val();
+            var totalPrice = price*count;
+
+            $("#totalPrePrice").html(totalPrice+'원');
+        }
+
+        function calculateTotalPrice(){
+            var count = $("#count").val();
+            var price = $("#price").val();
+            var totalPrice = price*count;
+            // 회원 등급에 따른 할인 로직
+            var grade = $("#grade").val();
+
+            if (grade === "SILVER") {
+                totalPrice = Math.floor(totalPrice * 0.9); // 10% 할인
+            } else if (grade === "GOLD") {
+                totalPrice = Math.floor(totalPrice * 0.8); // 20% 할인
+            }
+
+            $("#totalPrice").html(totalPrice+'원');
+            return totalPrice;
+        }
+        
+        function addCart()
+        {
+
+
+            var url="/shop/cart";
+            var paramData = {
+                itemId : $("#itemId").val(),
+                count : $("#count").val()
+            };
+            var param = JSON.stringify(paramData);
+            $.ajax({
+               url : url,
+               type: "POST",
+               contentType: "application/json",
+               data : param,
+               beforeSend : function (xhr){
+               },
+                dataType: "json",
+                cache : false,
+                success : function (result, status){
+                   alert("상품을 장바구니에 담았습니다.");
+                   location.href = '/shop/cart/';
+                },
+                error : function (jqXHR,status, error){
+                   if(jqXHR.status =='401'){
+                       alert("로그인 후 이용해주세요.");
+                       location.href = '/members/login';
+                   }else{
+                       alert(jqXHR.responseText);
+                   }
+                }
+            });
+        }
+        var errorMessage = /*[[${error}]]*/ null;
+        if (errorMessage) {
+            alert(errorMessage);
+            history.back(); // 뒤로 돌아가기
+        }
+
+        function order()
+        {
+            //var token=$("meta[name='_csrf']").attr("content");
+            //var header=$("meta[name='_csrf_header']").attr("content");
+
+            var url = "/shop/order";
+            var paramData={
+                itemId : $("#itemId").val(),
+                count : $("#count").val()
+            };
+
+            var param = JSON.stringify(paramData);
+            $.ajax({
+                url : url,
+                type : "POST",
+                contentType : "application/json",
+                data : param,
+                beforeSend : function(xhr){
+                    /*데이터를 전송하기 전에 헤더에 csrf 값을 설정*/
+                    //xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache : false,
+                success : function(result, status){
+                    alert("주문완료");
+                    location.href='/shop/orders/';
+                },
+                error : function (jqXHR,status,error){
+                    if(jqXHR.status == '401'){
+                        alert('정상적인 루트로 접근하세요');
+                        location.href='/';
+                    }else{
+                        alert(jqXHR.responseText);
+                    }
+                }
+            });
+        }
+
+        //문의 등록 코드
+        function confirmInquiry() {
+            if (confirm("문의글을 작성하시겠습니까?")) {
+                // 사용자가 "확인"를 클릭한 경우에만 폼을 제출합니다.
+                document.getElementById("inquiry").submit();
+            } else {
+                event.preventDefault();
+            }
+        }
+        //문의 삭제 코드
+        function deleteInquiry(inquiryId) {
+            //var token = $("meta[name='_csrf']").attr("content");
+            //var confirmation = confirm("문의를 삭제하시겠습니까?"); // 삭제를 확인하는 메시지
+
+            if (confirmation) { // 예 버튼을 클릭한 경우
+                $.ajax({
+                    type: "POST",
+                    url: "/item/inquiry/delete/" + inquiryId,
+                    headers: {
+                    },
+                    success: function(response) {
+                        console.log("문의가 성공적으로 삭제되었습니다.");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("문의 삭제 중 오류가 발생했습니다.");
+                    }
+                });
+            }
+        }
+        //문의 수정 코드
+        function updateInquiry(inquiryId) {
+            //var token = $("meta[name='_csrf']").attr("content");
+            var updatedContent = document.querySelector('.content-input-' + inquiryId).value;
+            var confirmation = confirm("문의를 수정하시겠습니까?");
+
+            if (confirmation) {
+                $.ajax({
+                    type: "POST",
+                    url: "/item/inquiry/update/" + inquiryId,
+                    data: {
+                    id: inquiryId,
+                    content: updatedContent
+                    },
+                    headers: {
+                    },
+                    success: function(response) {
+                        console.log("문의가 성공적으로 수정되었습니다.");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // 오류 응답일 경우 알림창 표시
+                        alert(xhr.responseText);
+                    }
+                });
+            }
+        }
+
+
+        //리뷰 수정 코드
+        function updateReview(reviewId) {
+            //var token = $("meta[name='_csrf']").attr("content");
+            var updatedContentReview = $("#contentReview").val();
+            var updatedStar = 0;
+
+            // 체크된 요소가 있는 경우 해당 값을 가져옴
+            var checkedStar = document.querySelector('.reviewStarGen:checked');
+            if (checkedStar) {
+                updatedStar = checkedStar.value;
+            }
+
+            var confirmation = confirm("리뷰를 수정하시겠습니까?");
+
+            if (confirmation) {
+                $.ajax({
+                    type: "POST",
+                    url: "/item/review/update/" + reviewId,
+                    data: {
+                        id: reviewId,
+                        revContent: updatedContentReview,
+                        reviewStar: updatedStar
+                    },
+                    headers: {
+                    },
+                    success: function(response) {
+                        console.log("리뷰가 성공적으로 수정되었습니다.");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+
+                        alert(xhr.responseText);
+                    }
+                });
+            }
+        }
+
+            //리뷰 삭제 코드
+        function deleteReview(reviewId) {
+            //var token = $("meta[name='_csrf']").attr("content");
+            var confirmation = confirm("문의를 삭제하시겠습니까?"); // 삭제를 확인하는 메시지
+
+            if (confirmation) { // 예 버튼을 클릭한 경우
+                $.ajax({
+                    type: "POST",
+                    url: "/item/review/delete/" + reviewId,
+                    headers: {
+                    },
+                    success: function(response) {
+                        console.log("리뷰가 성공적으로 삭제되었습니다.");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("리뷰 삭제 중 오류가 발생했습니다.");
+                    }
+                });
+            }
+        }
+
+
+        function editMode(inquiryId) {
+            var row = event.target.closest('tr');
+            var contentSpan = row.querySelector('.content-span-' + inquiryId);
+            var contentInput = row.querySelector('.content-input-' + inquiryId);
+            var buttonEditMode = row.querySelector('.button-editMode-' + inquiryId);
+            var buttonDelete = row.querySelector('.button-delete-' + inquiryId);
+            var buttonUpdate = row.querySelector('.button-update-' + inquiryId);
+            var buttonNoneEditMode = row.querySelector('.button-noneEditMode-' + inquiryId);
+
+            contentSpan.style.display = 'none';
+            contentInput.style.display = 'block';
+            buttonEditMode.style.display = 'none';
+            buttonDelete.style.display = 'none';
+            buttonUpdate.style.display = 'block';
+            buttonNoneEditMode.style.display = 'block';
+        }
+
+        function editModeCancel(inquiryId) {
+            var row = event.target.closest('tr');
+            var contentSpan = row.querySelector('.content-span-' + inquiryId);
+            var contentInput = row.querySelector('.content-input-' + inquiryId);
+            var buttonEditMode = row.querySelector('.button-editMode-' + inquiryId);
+            var buttonDelete = row.querySelector('.button-delete-' + inquiryId);
+            var buttonUpdate = row.querySelector('.button-update-' + inquiryId);
+            var buttonNoneEditMode = row.querySelector('.button-noneEditMode-' + inquiryId);
+
+            contentSpan.style.display = 'block';
+            contentInput.style.display = 'none';
+            buttonEditMode.style.display = 'block';
+            buttonDelete.style.display = 'block';
+            buttonUpdate.style.display = 'none';
+            buttonNoneEditMode.style.display = 'none';
+        }
+
+
+
+        function editModeReview(reviewId) {
+            var table = event.target.closest('table');
+            var contentSpan = table.querySelector('.content-span-' + reviewId);
+            var contentInput = table.querySelector('.content-input-' + reviewId);
+            var starEditMode = table.querySelector('.star-editMode-' + reviewId);
+            var starUpdate = table.querySelector('.star-update-' + reviewId);
+            var buttonEditMode = table.querySelector('.button-editMode-' + reviewId);
+            var buttonDelete = table.querySelector('.button-delete-' + reviewId);
+            var buttonUpdate = table.querySelector('.button-update-' + reviewId);
+            var buttonNoneEditMode = table.querySelector('.button-noneEditMode-' + reviewId);
+
+            contentSpan.style.display = 'none';
+            contentInput.style.display = 'block';
+            starEditMode.style.display = 'none';
+            starUpdate.style.display = 'block';
+            buttonEditMode.style.display = 'none';
+            buttonDelete.style.display = 'none';
+            buttonUpdate.style.display = 'block';
+            buttonNoneEditMode.style.display = 'block';
+        }
+
+        function editModeReviewCancel(reviewId) {
+            var table = event.target.closest('table');
+            var contentSpan = table.querySelector('.content-span-' + reviewId);
+            var contentInput = table.querySelector('.content-input-' + reviewId);
+            var starEditMode = table.querySelector('.star-editMode-' + reviewId);
+            var starUpdate = table.querySelector('.star-update-' + reviewId);
+            var buttonEditMode = table.querySelector('.button-editMode-' + reviewId);
+            var buttonDelete = table.querySelector('.button-delete-' + reviewId);
+            var buttonUpdate = table.querySelector('.button-update-' + reviewId);
+            var buttonNoneEditMode = table.querySelector('.button-noneEditMode-' + reviewId);
+
+            contentSpan.style.display = 'block';
+            contentInput.style.display = 'none';
+            buttonEditMode.style.display = 'block';
+            starEditMode.style.display = 'block';
+            starUpdate.style.display = 'none';
+            buttonDelete.style.display = 'block';
+            buttonUpdate.style.display = 'none';
+            buttonNoneEditMode.style.display = 'none';
+        }
+
+
+
+        var fileArr;
+        var fileInfoArr=[];
+
+        //썸네일 클릭시 삭제.
+        function fileRemove(index) {
+            console.log("index: " + index);
+            fileInfoArr.splice(index, 1);
+
+            var imgId = "#img_id_" + index;
+            $(imgId).remove();
+
+            // 이미지 목록에서도 삭제
+            var fileListId = "#View_area"; // 이미지 목록을 보여주는 요소의 ID
+            var fileListItems = $(fileListId).children(); // 이미지 목록의 자식 요소들 (각 이미지 아이템)
+            $(fileListItems[index]).remove();
+
+            console.log(fileInfoArr);
+        }
+
+
+        //썸네일 미리보기.
+        function previewImage(targetObj, View_area) {
+            var files=targetObj.files;
+            fileArr=Array.prototype.slice.call(files);
+
+            var preview = document.getElementById(View_area); //div id
+            var ua = window.navigator.userAgent;
+
+            //ie일때(IE8 이하에서만 작동)
+            if (ua.indexOf("MSIE") > -1) {
+                targetObj.select();
+                try {
+                    var src = document.selection.createRange().text; // get file full path(IE9, IE10에서 사용 불가)
+                    var ie_preview_error = document.getElementById("ie_preview_error_" + View_area);
+
+
+                    if (ie_preview_error) {
+                        preview.removeChild(ie_preview_error); //error가 있으면 delete
+                    }
+
+                    var img = document.getElementById(View_area); //이미지가 뿌려질 곳
+
+                    //이미지 로딩, sizingMethod는 div에 맞춰서 사이즈를 자동조절 하는 역할
+                    img.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"+src+"', sizingMethod='scale')";
+                } catch (e) {
+                    if (!document.getElementById("ie_preview_error_" + View_area)) {
+                        var info = document.createElement("<p>");
+                        info.id = "ie_preview_error_" + View_area;
+                        info.innerHTML = e.name;
+                        preview.insertBefore(info, null);
+                    }
+                }
+            //ie가 아닐때(크롬, 사파리, FF)
+            } else {
+                var files = targetObj.files;
+                for ( var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    fileInfoArr.push(file);
+
+                    var imageType = /image.*/; //이미지 파일일경우만 뿌려준다.
+                    if (!file.type.match(imageType))
+                        continue;
+                     var prevImg = document.getElementById("prev_" + View_area); //이전에 미리보기가 있다면 삭제
+                     if (prevImg) {
+                         preview.removeChild(prevImg);
+                     }
+
+                    var span=document.createElement('span');
+                    span.id="img_id_" +i;
+                    span.style.width = '100px';
+                    span.style.height = '100px';
+                    preview.appendChild(span);
+
+                    var img = document.createElement("img");
+                    img.className="addImg";
+                    img.classList.add("obj");
+                    img.file = file;
+                    img.style.width='inherit';
+                    img.style.height='inherit';
+                    img.style.cursor='pointer';
+                    const idx=i;
+                    img.onclick=()=>fileRemove(idx);   //이미지를 클릭했을 때.
+                    span.appendChild(img);
+
+                    if (window.FileReader) { // FireFox, Chrome, Opera 확인.
+                        var reader = new FileReader();
+                        reader.onloadend = (function(aImg) {
+                            return function(e) {
+                                aImg.src = e.target.result;
+                            };
+                        })(img);
+                        reader.readAsDataURL(file);
+                    } else { // safari is not supported FileReader
+                        //alert('not supported FileReader');
+                        if (!document.getElementById("sfr_preview_error_"
+                            + View_area)) {
+                            var info = document.createElement("p");
+                            info.id = "sfr_preview_error_" + View_area;
+                            info.innerHTML = "not supported FileReader";
+                            preview.insertBefore(info, null);
+                        }
+                    }
+                }
+            }
+
+        }
+        //아이템 신고
+        function reportItem(itemId) {
+            // 새 창의 위치 계산
+            var left = screen.availLeft + 200; // 왼쪽으로 200px 이동
+            var top = screen.availTop + 200; // 위쪽으로 200px 이동
+
+            // 신고 창을 표시할 HTML 문서의 URL
+            var reportUrl = '/report/shop/item/' + itemId; // 신고 창을 표시할 HTML 문서의 URL에 itemId를 파라미터로 전달
+
+            // 새 창 열기
+            window.open(reportUrl, '_blank', 'width=800,height=500,left=' + left + ',top=' + top + ',resizable=no');
+        }
+
+        //문의글 신고
+        function reportInquiry(inquiryId) {
+            var left = screen.availLeft + 200; // 왼쪽으로 200px 이동
+            var top = screen.availTop + 200; // 위쪽으로 200px 이동
+
+            // 신고 창을 표시할 HTML 문서의 URL
+            var reportUrl = '/report/shop/inquiry/' + inquiryId; // 신고 창을 표시할 HTML 문서의 URL에 itemId를 파라미터로 전달
+
+            // 새 창 열기
+            window.open(reportUrl, '_blank', 'width=800,height=500,left=' + left + ',top=' + top + ',resizable=no');
+        }
+
+        //문의 답변 신고
+        function reportInquiryAnswer(inquiryAnswerId) {
+            var left = screen.availLeft + 200; // 왼쪽으로 200px 이동
+            var top = screen.availTop + 200; // 위쪽으로 200px 이동
+
+            // 신고 창을 표시할 HTML 문서의 URL
+            var reportUrl = '/report/shop/inquiryAnswer/' + inquiryAnswerId; // 신고 창을 표시할 HTML 문서의 URL에 itemId를 파라미터로 전달
+
+            // 새 창 열기
+            window.open(reportUrl, '_blank', 'width=800,height=500,left=' + left + ',top=' + top + ',resizable=no');
+        }
+
+        //리뷰 신고
+        function reportReview(reviewId) {
+            // 새 창의 위치 계산
+            var left = screen.availLeft + 200; // 왼쪽으로 200px 이동
+            var top = screen.availTop + 200; // 위쪽으로 200px 이동
+
+            // 신고 창을 표시할 HTML 문서의 URL
+            var reportUrl = '/report/shop/review/' + reviewId; // 신고 창을 표시할 HTML 문서의 URL에 itemId를 파라미터로 전달
+
+            // 새 창 열기
+            window.open(reportUrl, '_blank', 'width=800,height=500,left=' + left + ',top=' + top + ',resizable=no');
+        }
+
+
+
+
+
+    </script>
+</th:block>
+<th:block layout:fragment="css">
+    <style>
+        .image-container {
+            display: inline-block;
+            margin: 5px;
+            width: 100px;
+            height: 100px;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .mgb-15{
+            margin-bottom:15px;
+        }
+        .mgt-30{
+            margin-top:30px;
+        }
+        .mgt-50{
+            margin-top:50px;
+        }
+        .repImgDiv{
+            margin-right:15px;
+            height:auto;
+            width:50%;
+        }
+        .repImg{
+            width:100%;
+            height:400px;
+        }
+        .wd50{
+            height:auto;
+            width:50%;
+        }
+        .form-group {
+        display: flex;
+        flex-wrap: nowrap;
+        }
+
+        .form-group label {
+            white-space: nowrap;
+        }
+
+        .form-group input, .form-group textarea {
+            flex-grow: 1;
+        }
+        .inquiry {
+        border: 1px solid gray;
+        border-radius: 5px;
+        }
+        .button-wrapper {
+            display: inline-block;
+            width: 30%;
+            position: relative;
+            overflow: hidden;
+        }
+        .button-wrapper button {
+            width: 100%;
+            font-size: 14px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 0;
+            padding-right: 0;
+            white-space: nowrap;
+        }
+        .review {
+        border: 1px solid gray;
+        border-radius: 5px;
+        }
+
+        #reviewSub fieldset,
+        #reviewList fieldset {
+          display: inline-block;
+          direction: rtl;
+          border: 0;
+        }
+
+        #reviewSub fieldset legend,
+        #reviewList fieldset legend {
+          text-align: right;
+        }
+
+        #reviewSub input[type=radio],
+        #reviewList input[type=radio] {
+          display: none;
+        }
+
+        #reviewSub fieldset label{
+          font-size: 3em;
+          color: transparent;
+          text-shadow: 0 0 0 #f0f0f0;
+        }
+
+        #reviewList fieldset label {
+          font-size: 1em;
+          color: transparent;
+          text-shadow: 0 0 0 #f0f0f0;
+        }
+
+        #reviewSub fieldset label:hover,
+        #reviewList fieldset label:hover,
+        #reviewSub fieldset label:hover ~ label,
+        #reviewList fieldset label:hover ~ label {
+          text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+        }
+
+
+        #reviewSub fieldset input[type=radio]:checked ~ label,
+        #reviewList fieldset input[type=radio]:checked ~ label {
+          text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+        }
+    </style>
+</th:block>
+
+
+<div layout:fragment="content" style="margin-left:25%;margin-right:25%">
+    <link href="/css/star.css" rel="stylesheet"/>
+
+
+    <input type="hidden" id="itemId" th:value="${item.id}">
+    <input type="hidden" id="grade" th:value="${grade}">
+    <div class="d-flex">
+        <div class="repImgDiv">
+            <img th:src="${item.itemImgDtoList[0].imgUrl}" class="rounded repImg" th:alt="${item.itemNm}">
+        </div>
+        <div class="wd50">
+            <span th:if="${item.itemSellStatus == T(com.blue.bluearchive.constant.ItemSellStatus).SELL}"
+                  class="badge badge-dark mgb-15">
+                판매중
+            </span>
+            <span th:unless="${item.itemSellStatus == T(com.blue.bluearchive.constant.ItemSellStatus).SELL}"
+                  class="badge btn-danger mgb-15">
+                품절
+            </span>
+            <div class="h4" th:text="${item.itemNm}" id="itemNm"></div>
+            <div class="h5">판매자 <span style="font-size: 25px" th:text="${item.sellerNickName}"/></div>
+            <hr class="my-4">
+
+
+            <div class="text-right">
+                <div class="h4 text-left">
+                    총 수량<p></p>
+                    <span class="font-weight-bold" th:text="${item.stockNumber}"></span>개
+                    <p></p>
+                    <input type="hidden" th:value="${item.price}" id="price" name="price">
+                    가격 <span th:text="${item.price}"></span>원
+                </div>
+                <div class="input-group w-50">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">수량</span>
+                    </div>
+                    <input type="number" name="count" id="count" class="form-control" value="1" min="1">
+                </div>
+            </div>
+            <hr class="my-4">
+
+
+            <div class="text-right mgt-50">
+                <h5>결제 금액</h5>
+                <span th:if="${#authorization.expression('hasAuthority(''GRADE_SILVER'')')}">10%</span>
+                <span th:if="${#authorization.expression('hasAuthority(''GRADE_GOLD'')')}">20%</span>
+                <s th:unless="${#authorization.expression('hasAuthority(''GRADE_BRONZE'')')}" id="totalPrePrice"
+                   th:text="${item.price} + '원'"></s>
+
+                <h3 name="totalPrice" id="totalPrice" class="font-weight-bold text-danger" th:text="${item.price}"></h3>
+            </div>
+            <div th:if="${item.itemSellStatus == T(com.blue.bluearchive.constant.ItemSellStatus).SELL}"
+                 class="text-right">
+                <button type="button" class="btn btn-light border border-dark btn-lg" onclick="addCart()">
+                    장바구니 담기
+                </button>
+                <!--                <button type="button" class="btn btn-dark btn-lg" onclick="order()">주문하기</button>-->
+                <button id="payment-button" class="btn btn-dark btn-lg">주문하기</button>
+            </div>
+            <div th:unless="${item.itemSellStatus == T(com.blue.bluearchive.constant.ItemSellStatus).SELL}"
+                 class="text-right">
+                <button type="button" class="btn btn-danger btn-lg">품절</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="jumbotron jumbotron-fluid mgt-30">
+        <div class="container">
+            <h4 class="display-5">상품 상세 설명</h4>
+            <hr class="my-4">
+            <p class="lead" th:text="${item.itemDetail}"></p>
+        </div>
+    </div>
+
+
+    <div th:each="itemImg : ${item.itemImgDtoList}" class="text-center">
+        <img th:if="${not #strings.isEmpty(itemImg.imgUrl)}" th:src="${itemImg.imgUrl}" class="rounded mgb-15"
+             width="800">
+    </div>
+    <div style="text-align: center;">
+        <button type="button" class="btn btn-light border border-dark" th:attr="onclick='reportItem(\'' + ${item.id} + '\')'">
+            상품 신고하기
+        </button>
+    </div>
+
+    <h5 style="text-align: center; border-radius: 5px; padding: 10px; margin-top: 10px;" class="bg-secondary text-white">상품 문의</h5>
+    <div class="inquiry">
+        <form id="inquiry" method="post" th:action="@{/item/inquiry/{itemId}(itemId=${item.id})}">
+            <input type="hidden" id="itemId2" th:value="${item.id}">
+            <div class="form-group" style="margin: 10px;">
+                <label for="name" style="width: 80px; text-align: center;">작성자</label>
+                <input type="text" id="name" name="name" class="inquiry" style="width: 20%; text-align: center;"
+                       th:value="${#authentication.principal.nickName != null ? #authentication.principal.nickName : ''}"
+                       readonly>
+                <label for="email" style="width: 80px; text-align: center;">이메일</label>
+                <input type="email" id="email" name="createdBy" class="inquiry" style="width: 65%; padding-left:5px;"
+                       th:value="${#authentication.principal.email != null ? #authentication.principal.email : ''}"
+                       readonly>
+            </div>
+            <div class="form-group" style="margin: 10px;">
+                <label for="question" style="width: 80px; text-align: center;">문의내용</label>
+                <textarea id="question" name="inquiryContent" class="inquiry" style="width: 94%;"
+                          th:placeholder="${#httpServletRequest.userPrincipal == null ? '로그인이 필요합니다' : ''}"
+                          th:readonly="${#httpServletRequest.userPrincipal == null}"></textarea>
+            </div>
+            <div class="text-center" style="margin: 5px;" th:if="${#httpServletRequest.userPrincipal != null}">
+                <button type="submit" class="btn btn-dark" onclick="confirmInquiry()">문의하기</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="inquiry" style="text-align: center;">
+        <table style="width:100%">
+            <tr style="text-align: center; font-weight: bold;">
+                <td style="width: 10%">작성자</td>
+                <td style="width: 60%">문의 내용</td>
+                <td style="width: 15%">작성 시간</td>
+                <td style="width: 15%">수정/삭제</td>
+            </tr>
+        </table>
+        <table th:each="inquiry : ${inquiryList}" style="width: 100%">
+            <tr style="text-align: center; font-weight: bold;">
+                <td style="width: 10%"></td>
+                <td style="width: 60%"></td>
+                <td style="width: 15%"></td>
+                <td style="width: 15%"></td>
+            </tr>
+            <tr style="text-align: center;">
+                <input type="hidden" id="inquiryId" th:value="${inquiry.id}">
+                <td th:text="${inquiry.createdBy}" style="padding: 5px;"></td>
+                <td>
+                    <span th:text="${inquiry.content}" th:class="'content-span-' + ${inquiry.id}"></span>
+                    <textarea style="width: 100%; display: none; overflow-y: hidden;"
+                              th:text="${inquiry.content}"
+                              th:class="'content-input-' + ${inquiry.id}"></textarea>
+                </td>
+                <td th:text="${#temporals.format(inquiry.regTime, 'yy-MM-dd hh:mm')}"></td>
+                <td th:if="${#authentication.principal.nickName == inquiry.createdBy}">
+                    <div class="button-wrapper">
+                        <button type="button" th:attr="onclick='editMode(\'' + ${inquiry.id} + '\')'"
+                                th:class="'button-editMode-' + ${inquiry.id} + ' btn btn-dark'">수정
+                        </button>
+                        <button type="button" style="display: none;"
+                                th:attr="onclick='updateInquiry(\'' + ${inquiry.id} + '\')'"
+                                th:class="'button-update-' + ${inquiry.id} + ' btn btn-dark'">수정
+                        </button>
+                    </div>
+                    <div class="button-wrapper">
+                        <button type="button" th:attr="onclick='deleteInquiry(\'' + ${inquiry.id} + '\')'"
+                                th:class="'button-delete-' + ${inquiry.id} + ' btn btn-dark'">삭제
+                        </button>
+                        <button type="button" style="display: none;" th:attr="onclick='editModeCancel(\'' + ${inquiry.id} + '\')'"
+                                th:class="'button-noneEditMode-' + ${inquiry.id} + ' btn btn-dark'">취소
+                        </button>
+                    </div>
+                </td>
+                <td th:if="${#authentication.principal.nickName != inquiry.createdBy}">
+                    <div class="button-wrapper">
+                        <button type="button" th:attr="onclick='reportInquiry(\'' + ${inquiry.id} + '\')'" class="btn btn-light border border-dark">신고</button>
+                    </div>
+                </td>
+            </tr>
+            <tr th:each="inquiryAnswer : ${inquiryAnswerList}" th:if="${inquiryAnswer.inquiry.getId()} == ${inquiry.id}"
+                style="background-color: #FAFAFA; text-align: center;">
+                <td style="padding: 5px;">판매자</td> <!-- 작성자 정보가 들어갈 자리 -->
+                <td>
+                    <span th:text="${inquiryAnswer.content}" class="content-span"></span>
+                </td>
+                <td th:text="${#temporals.format(inquiryAnswer.regTime, 'yy-MM-dd hh:mm')}"></td>
+                <!-- 작성 시간 정보가 들어갈 자리 -->
+                <td>
+                   <div class="button-wrapper">
+                       <button type="button" th:attr="onclick='reportInquiryAnswer(\'' + ${inquiryAnswer.id} + '\')'" class="btn btn-light border border-dark">신고</button>
+                   </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <h5 style="text-align: center; border-radius: 5px; padding: 10px; margin-top: 10px;"
+        class="bg-secondary text-white">상품 리뷰</h5>
+    <div class="review">
+        <form id="reviewSub" name="myform" enctype="multipart/form-data" class="mb-3" method="post"
+              th:action="@{/item/review/{itemId}(itemId=${item.id})}">
+            <input type="hidden" id="itemIdReview" th:value="${item.id}">
+
+            <fieldset>
+                <input type="radio" name="reviewStar" value="5" id="rate1"><label
+                    for="rate1">★</label>
+                <input type="radio" name="reviewStar" value="4" id="rate2"><label
+                    for="rate2">★</label>
+                <input type="radio" name="reviewStar" value="3" id="rate3"><label
+                    for="rate3">★</label>
+                <input type="radio" name="reviewStar" value="2" id="rate4"><label
+                    for="rate4">★</label>
+                <input type="radio" name="reviewStar" value="1" id="rate5"><label
+                    for="rate5">★</label>
+            </fieldset>
+
+            <div style="display: inline;">
+                <label for="reviewImgFileList">
+                    <img src="/img/photo_add.jpg" style="width:100px; height:100px; cursor: pointer;">
+                </label>
+                <input type="file" name="reviewImgFile" id="reviewImgFileList"
+                       onchange="previewImage(this,'View_area')"
+                       style="display: none;" multiple>
+                <span id='View_area'
+                      style='position:relative; color: black; border: 0px solid black;'>
+                </span>
+            </div>
+
+
+            <div class="form-group" style="margin: 10px;">
+                <label for="nameReview" style="width: 45px;">이름</label>
+                <input type="text" id="nameReview" name="name" class="review" style="width: 13%; text-align: center;"
+                       th:value="${#authentication.principal.nickName != null ? #authentication.principal.nickName : ''}"
+                       readonly>
+                <label for="emailReview" style="width: 65px; text-align: center;">이메일</label>
+                <input type="email" id="emailReview" name="createdByEmail" class="review" style="width: 72%;"
+                       th:value="${#authentication.principal.email != null ? #authentication.principal.email : ''}"
+                       readonly>
+            </div>
+            <div class="form-group" style="margin: 10px;">
+                <label for="questionReview" style="width: 45px;">리뷰</label>
+                <textarea id="questionReview" name="reviewContent" class="review" style="width: 94%;"
+                          th:placeholder="${#httpServletRequest.userPrincipal == null ? '로그인이 필요합니다' : ''}"
+                          th:readonly="${#httpServletRequest.userPrincipal == null}"></textarea>
+            </div>
+            <div class="text-center" style="margin: 5px;" th:if="${#httpServletRequest.userPrincipal != null}">
+                <button type="submit" class="btn btn-dark">리뷰작성</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div id="reviewList" class="review" style="text-align: left; padding: 10px;">
+        <h4>구매 고객님이 작성해주신 리뷰</h4>
+        <table th:each="review : ${reviewList}" style="width: 100%; border: 1px solid gray;">
+            <input type="hidden" id="reviewId" th:value="${review.id}">
+            <tr>
+                <span th:each="reviewImg : ${review.reviewImgDtoList}">
+                    <div class="image-container">
+                        <img th:if="${not #strings.isEmpty(reviewImg.imgUrl)}" th:src="${reviewImg.imgUrl}" height="200"
+                             width="50">
+                    </div>
+                </span>
+            </tr>
+            <tr>
+                <td>
+                    <span style="display: inline-block; font-size: 22px; padding-left: 15px;"
+                          th:text="${review.nickName} "></span>
+                    <span th:text="${#temporals.format(review.regTime, 'yy-MM-dd hh:mm')}"></span>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 15px">
+                    <fieldset th:class="'star-update-' + ${review.id}" style="display: none;">
+                        <input type="radio" class="reviewStarGen" value="5" id="rate1Update"><label
+                            for="rate1Update">★</label>
+                        <input type="radio" class="reviewStarGen" value="4" id="rate2Update"><label
+                            for="rate2Update">★</label>
+                        <input type="radio" class="reviewStarGen" value="3" id="rate3Update"><label
+                            for="rate3Update">★</label>
+                        <input type="radio" class="reviewStarGen" value="2" id="rate4Update"><label
+                            for="rate4Update">★</label>
+                        <input type="radio" class="reviewStarGen" value="1" id="rate5Update"><label
+                            for="rate5Update">★</label>
+                    </fieldset>
+                    <img th:if="${review.star == '5'}" src="/img/reviewFive.png" th:class="'star-editMode-' + ${review.id}" alt="5 stars"
+                         width="100" height="18">
+                    <img th:if="${review.star == '4'}" src="/img/reviewFour.png" th:class="'star-editMode-' + ${review.id}" alt="4 stars"
+                         width="100" height="18">
+                    <img th:if="${review.star == '3'}" src="/img/reviewThree.png" th:class="'star-editMode-' + ${review.id}" alt="3 stars"
+                         width="100" height="18">
+                    <img th:if="${review.star == '2'}" src="/img/reviewTwo.png" th:class="'star-editMode-' + ${review.id}" alt="2 stars"
+                         width="100" height="18">
+                    <img th:if="${review.star == '1'}" src="/img/reviewOne.png" th:class="'star-editMode-' + ${review.id}" alt="1 stars"
+                         width="100" height="18">
+                    <img th:if="${review.star == '0'}" src="/img/reviewZero.png" th:class="'star-editMode-' + ${review.id}" alt="0 stars"
+                         width="100" height="18">
+                    <span>([[${review.star}]]점)</span>
+                </td>
+                <td th:if="${#strings.toString(review.createdBy) == #strings.toString(#authentication.principal.idx)}">
+                    <div class="button-wrapper">
+                        <button type="button" th:attr="onclick='editModeReview(\'' + ${review.id} + '\')'"
+                                th:class="'button-editMode-' + ${review.id} + ' btn btn-dark'">
+                            수정
+                        </button>
+                        <button type="button" style="display: none;" th:attr="onclick='updateReview(\'' + ${review.id} + '\')'"
+                                th:class="'button-update-' + ${review.id} + ' btn btn-dark'">수정
+                        </button>
+                    </div>
+                    <div class="button-wrapper">
+                        <button type="button" th:attr="onclick='deleteReview(\'' + ${review.id} + '\')'"
+                                th:class="'button-delete-' + ${review.id} + ' btn btn-dark'">삭제
+                        </button>
+                        <button type="button" style="display: none;" th:attr="onclick='editModeReviewCancel(\'' + ${review.id} + '\')'"
+                                th:class="'button-noneEditMode-' + ${review.id} + ' btn btn-dark'">취소
+                        </button>
+                    </div>
+                    <div class="button-wrapper">
+                        <button type="button" class="btn btn-light border border-dark" th:attr="onclick='reportReview(\'' + ${review.id} + '\')'">
+                            신고하기
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: left; border: 1px gray solid; border-radius: 5px;">
+                    <span th:text="${review.content}" th:class="'content-span-' + ${review.id}" style="padding: 10px;"></span>
+                    <textarea style="width: 100%; display: none; overflow-y: hidden;"
+                              th:text="${review.content}"
+                              th:class="'content-input-' + ${review.id}" name="contentReview" id="contentReview"></textarea>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script src="https://js.tosspayments.com/v1"></script>
+    <script>
+        var tossPayments = TossPayments("test_ck_0Poxy1XQL8R6epq5X5987nO5Wmlg");
+        var button = document.getElementById("payment-button");
+        var orderId = new Date().getTime();
+
+        button.addEventListener("click", function () {
+          var itemId = $("#itemId").val();
+          var count = $("#count").val();
+          var itemNm = $("#itemNm").text();
+
+          tossPayments.requestPayment('카드', {
+              amount: calculateTotalPrice(),
+              orderId: orderId,
+              orderName: itemNm,
+              customerName: "이토페"
+            })
+            .then(function (data) {
+              order();
+            })
+            .catch((error) => {
+              // 에러 처리: 에러 목록을 확인하세요
+              // https://docs.tosspayments.com/reference/error-codes#failurl로-전달되는-에러
+              if (error.code === 'USER_CANCEL') {
+                alert("결제를 취소하였습니다.");
+              } else if (error.code === 'INVALID_CARD_COMPANY') {
+                alert("카드가 유효하지 않습니다.");
+              }
+            });
+
+        });
+
+
+    </script>
+
+
+</div>
+
+</div>
+
+
+</html>

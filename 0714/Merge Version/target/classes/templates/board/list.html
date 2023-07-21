@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<head>
+
+  <meta charset="UTF-8">
+  <title>블루아카이브_list</title>
+  <!-- CSS only -->
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+
+
+</head>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+  <script th:inline="javascript">
+    function submitForm(categoryId) {
+      var url = "/board/" + categoryId;
+      window.location.href = url;
+    }
+
+    $(document).ready(function(){
+      $("#searchBtn").on("click",function(e) {
+        e.preventDefault();
+        page(0);
+      });
+    });
+
+    function page(page, categoryId) {
+      var searchBy = $("#searchBy").val();
+      var searchQuery = $("#searchQuery").val();
+      var chuchuValue = /*[[${chuchu}]]*/ null;
+
+      var categoryIdParam = categoryId || (chuchuValue ? "chuchu" : "all");
+
+      if(!searchQuery){
+      location.href = "/board/" + categoryIdParam + "/" + page;
+      }
+      else {
+      location.href = "/board/" + "all" + "/" + page + "?searchBy=" + searchBy + "&searchQuery=" + searchQuery;
+      }
+    }
+
+    function checkLogin() {
+      var memberIdx = /*[[${memberIdx}]]*/ null;
+      if (memberIdx==null) {
+        var originalUrl = window.location.href; // 현재 페이지의 URL을 가져옴
+        alert("로그인 해주세요.")
+        window.location.href = "/member/login?returnUrl=" + encodeURIComponent(originalUrl);
+        return false;
+      }
+      return true;
+    }
+
+  </script>
+</th:block>
+</th:block>
+<body>
+
+
+
+
+
+<!-- 메인 부분 -->
+<div layout:fragment="content" class="content">
+
+    <div class="container-fluid " style="margin-top: 40px;">
+      <div class="row gx-0">
+        <div class="row">
+          <div class="col-md-4 text-left h3">
+            <div th:if="${categoryId == null}">
+              <div th:if="${chuchu ==null}">전체 보기</div>
+              <div th:unless="${chuchu ==null}">핫 게시판</div>
+            </div>
+            <div th:unless="${categoryId == null}" th:text="${categoryList.get(categoryId-1).getCategoryName()}">
+
+            </div>
+          </div>
+
+        </div>
+
+
+
+        <div class="col-10">
+          <div class="container-fluid">
+
+            <div class="row">
+              <div class="col-12 text-center">
+                <div class="d-flex justify-content-left"> <!-- 부모 컨테이너 -->
+                  <a href="/board/chuchu" class="btn btn-outline-secondary">30추글</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12 text-left">
+
+                <div class="d-flex justify-content-left"> <!-- 부모 컨테이너 -->
+                  <a href="/board/all" class="btn btn-outline-secondary">전체보기</a>
+                  <div class="btn btn-outline-secondary" th:each="category : ${categoryList}">
+                    <a th:href="'/board/'+${category.getCategoryId()}">
+                      <span th:text="${category.categoryName}"></span>
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="d-none d-md-block col-1 text-center">
+                번호
+              </div>
+              <div class="col-6 text-left">
+                &nbsp
+                제목(댓글 수)
+              </div>
+              <div class="col-2 text-center">
+                작성자
+              </div>
+              <div class="col-2 text-center">
+                날짜
+              </div>
+              <div class="d-none d-md-block col-1 text-center">
+                조회수
+              </div>
+            </div>
+
+            <div class="row" th:each="board, status:${boards.getContent()}">
+              <div class="d-none d-md-block col-md-1 text-center" th:text="${board.boardId}">
+              </div>
+              <div class="col-6 text-left">
+                &nbsp
+                <span th:text="'['+${board.category.categoryName}+']'"></span>
+                <a th:href="'/board/Detail/' + ${board.boardId}" th:text="${board.boardTitle}"></a>
+                <span th:if="${board.commentCount > 0}" th:text="'['+${board.commentCount}+']'"></span>
+
+
+              </div>
+
+
+
+              <div class="col-2 text-center" th:text="${createdBy[__${status.index}__]}">
+              </div>
+              <div class="col-2 text-center" >
+                <script th:inline="javascript">
+                  var boardTime = /*[[${board.regTime}]]*/ '';
+                  var date = new Date(boardTime);
+
+                  var today = new Date();
+
+                  if (date.toDateString() === today.toDateString()) {
+                    var hours = ('0' + (date.getHours())).slice(-2);
+                    var minutes = ('0' + date.getMinutes()).slice(-2);
+                    document.write(hours + ':' + minutes);
+                  } else {
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    var day = ('0' + date.getDate()).slice(-2);
+                    document.write(month + '-' + day);
+                  }
+                </script>
+              </div>
+              <div class="d-none d-md-block col-1 text-center" th:text="${board.boardCount}">
+              </div>
+            </div>
+
+
+
+          </div>
+
+
+
+          <br>
+          <div class="row">
+            <div th:with="start=${(boards.number/maxPage)*maxPage + 1}, end=(${(boards.totalPages == 0) ? 1 : (start + (maxPage - 1) < boards.totalPages ? start + (maxPage - 1) : boards.totalPages)})">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${boards.first}?'disabled'">
+                  <a th:onclick="'javascript:page(' + ${boards.number - 1} + ', ' + ${categoryId} + ')'" aria-label='Previous' class="page-link">
+                    <span aria-hidden='true'>Previous</span>
+                  </a>
+                </li>
+                <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${boards.number eq page-1}?'active':''">
+                  <a th:onclick="'javascript:page(' + ${page - 1} + ', ' + ${categoryId} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+                </li>
+                <li class="page-item" th:classappend="${boards.last}?'disabled'">
+                  <a th:onclick="'javascript:page(' + ${boards.number + 1} + ', ' + ${categoryId} + ')'" aria-label='Next' class="page-link">
+                    <span aria-hidden='true'>Next</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <br>
+
+          <div class="form-inline justify-content-center" th:object="${boardSearchDto}">
+
+            <select th:field="*{searchBy}" class="form-control" style="width:auto;">
+              <option value="boardTitle">제목</option>
+              <option value="boardContent">내용</option>
+              <option value="createdBy">등록자</option>
+            </select>
+            <input th:field="*{searchQuery}" type="text" class="form-control" placeholder="검색어를 입력해주세요">
+            <button id="searchBtn" type="submit" class="btn btn-primary">검색</button>
+          </div>
+          <div class="row">
+            <div class="col-md-1 offset-md-11 text-center">
+              <a href="/board/Write/new"  class="btn btn-outline-secondary" onclick="return checkLogin()">글쓰기</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+</div>
+
+</body>
+
+</html>

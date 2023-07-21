@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="74d002f3-accb-43a6-8ef6-f7e8d4d6790d" name="변경" comment="변경dsa" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
+  </component>
+  <component name="ExportToHTMLSettings">
+    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/../0624승훈이 관리자 디렉토리 구조 변경 + 미처리 신고 정렬 전부 적용완\exportToHTML" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectId" id="2QUyE8FRmrZ2q5EQ4MIQGwHSnfC" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/0703전체적으로_합친버전/src/main/resources/templates/shopAdmin",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "SDK",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
+    "spring.configuration.checksum": "7c5f683ad3e248b9aaf6792f7468968a",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.blue.bluearchive.test" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\0703전체적으로_합친버전\src\main\resources\templates\shopAdmin" />
+      <recent name="C:\Users\hgh04\Documents\spring_study2\LASTCHECK\HOON\0703유저관리 유저상태빼고 다 끝남zip\0624승훈이 관리자 디렉토리 구조 변경 + 미처리 신고 정렬 전부 적용완\src\main\resources\static\img" />
+      <recent name="C:\Users\hgh04\Documents\spring_study2\LASTCHECK\HOON\0703유저관리 유저상태빼고 다 끝남zip\0624승훈이 관리자 디렉토리 구조 변경 + 미처리 신고 정렬 전부 적용완\src\main\java\com\blue\bluearchive" />
+      <recent name="C:\Users\mocco\OneDrive\바탕 화면\새 폴더\0624승훈이 관리자 디렉토리 구조 변경 + 미처리 신고 정렬 전부 적용완\src\main\resources\templates\adminPage" />
+      <recent name="C:\Users\hgh04\Documents\spring_study2\LASTCHECK\gunbbang\0623마이페이지거의 완성\src\main\resources\templates" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\mocco\OneDrive\바탕 화면\새 폴더\0624승훈이 관리자 디렉토리 구조 변경 + 미처리 신고 정렬 전부 적용완\src\main\resources\static\img" />
+      <recent name="C:\Users\hgh04\Documents\spring_study2\LASTCHECK\HOON\bluearchive\bluearchive\src\main\resources\templates" />
+      <recent name="C:\Users\hgh04\Documents\spring_study2\LASTCHECK\HOON\bluearchive\bluearchive\src\main\resources\static" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.blue.bluearchive.admin.dto" />
+      <recent name="com.blue.bluearchive.admin.controller" />
+      <recent name="com.blue.bluearchive.test" />
+      <recent name="com.blue.bluearchive.report.service" />
+      <recent name="com.blue.bluearchive.report.repository" />
+    </key>
+  </component>
+  <component name="RunManager" selected="애플리케이션.BluearchiveApplication">
+    <configuration name="BluearchiveApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.blue.bluearchive.BluearchiveApplication" />
+      <module name="bluearchive" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.blue.bluearchive.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BookTest.bookTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="bluearchive" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.blue.bluearchive.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.blue.bluearchive" />
+      <option name="MAIN_CLASS_NAME" value="com.blue.bluearchive.BookTest" />
+      <option name="METHOD_NAME" value="bookTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BluearchiveApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="bluearchive" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.blue.bluearchive.BluearchiveApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="애플리케이션.BluearchiveApplication" />
+        <item itemvalue="JUnit.BookTest.bookTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="74d002f3-accb-43a6-8ef6-f7e8d4d6790d" name="변경" comment="" />
+      <created>1685422341188</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1685422341188</updated>
+      <workItem from="1685644296153" duration="726000" />
+      <workItem from="1685684183033" duration="153000" />
+      <workItem from="1685684355318" duration="570000" />
+      <workItem from="1685685436029" duration="778000" />
+      <workItem from="1685688097405" duration="10221000" />
+      <workItem from="1685862372410" duration="6710000" />
+      <workItem from="1685871331820" duration="1194000" />
+      <workItem from="1685949229257" duration="999000" />
+      <workItem from="1686036432200" duration="4330000" />
+      <workItem from="1686044290470" duration="30000" />
+      <workItem from="1686044384128" duration="4816000" />
+      <workItem from="1686098065310" duration="13803000" />
+      <workItem from="1686187486230" duration="4543000" />
+      <workItem from="1686193335522" duration="20029000" />
+      <workItem from="1686279489544" duration="6298000" />
+      <workItem from="1686296690925" duration="5435000" />
+      <workItem from="1686386631686" duration="2710000" />
+      <workItem from="1686391988591" duration="13508000" />
+      <workItem from="1686474768217" duration="2269000" />
+      <workItem from="1686530313677" duration="24121000" />
+      <workItem from="1686560714076" duration="2425000" />
+      <workItem from="1686616853492" duration="6847000" />
+      <workItem from="1686623834775" duration="13064000" />
+      <workItem from="1686642031480" duration="16252000" />
+      <workItem from="1686703534856" duration="17563000" />
+      <workItem from="1686724324328" duration="11565000" />
+      <workItem from="1686738721963" duration="2922000" />
+      <workItem from="1686789593142" duration="13000" />
+      <workItem from="1686789671309" duration="13981000" />
+      <workItem from="1686806315972" duration="15162000" />
+      <workItem from="1686875761776" duration="10744000" />
+      <workItem from="1686887093196" duration="5099000" />
+      <workItem from="1686895497759" duration="1952000" />
+      <workItem from="1686901402810" duration="2540000" />
+      <workItem from="1686905170705" duration="2582000" />
+      <workItem from="1687073217054" duration="16218000" />
+      <workItem from="1687135451035" duration="7431000" />
+      <workItem from="1687143571852" duration="17679000" />
+      <workItem from="1687597392298" duration="5492000" />
+      <workItem from="1687667899169" duration="19305000" />
+      <workItem from="1687739778254" duration="9933000" />
+      <workItem from="1687758765118" duration="7713000" />
+      <workItem from="1687832679772" duration="2121000" />
+      <workItem from="1687875370811" duration="29727000" />
+      <workItem from="1688001360151" duration="42781000" />
+      <workItem from="1688193413517" duration="11388000" />
+      <workItem from="1688268798332" duration="21883000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.StackOverflowError" package="java.lang" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

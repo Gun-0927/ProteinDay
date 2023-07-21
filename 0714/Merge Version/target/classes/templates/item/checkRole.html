@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+
+<!--<head>-->
+<!--    <meta name="_csrf" th:content="${_csrf.token}" />-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}" />-->
+<!--</head>-->
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+
+    var isSeller = /*[[${isSeller}]]*/ true;
+    var isSellerWaiting = /*[[${isSellerWaiting}]]*/ false;
+
+    if(isSellerWaiting){
+        alert([[${alertMessage}]]);
+        history.back();
+    }
+
+    if (!isSeller) {
+        // 확인 대화 상자 표시
+        var confirmResult = confirm("판매내역과 상품관리는 판매자만 접속 가능합니다.\n확인을 눌루시면 판매자 신청창으로 넘어갈 수 있습니다.");
+
+        // 사용자가 "취소"을 선택한 경우 이전 페이지로 이동
+        if (!confirmResult) {
+            history.back();
+        }
+    }
+
+     function signUpSeller(memberIdx) {
+            var confirmation = confirm("판매자 신청하시겠습니까?");
+
+            if (confirmation) { // 예 버튼을 클릭한 경우
+                $.ajax({
+                    type: "POST",
+                    url: "/shop/seller/" + memberIdx,
+                    headers: {
+                    },
+                    success: function(response) {
+                        console.log("신청되었습니다.");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("신청 중 오류가 발생했습니다.");
+                    }
+                });
+            }
+        }
+
+    </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        select{
+            margin-right:10px;
+        }
+        .page-link {
+            color: #000;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+
+        .page-item.active .page-link {
+            z-index: 1;
+            color: #555;
+            font-weight:bold;
+            background-color: #f1f1f1;
+            border-color: #ccc;
+        }
+
+        .page-link:focus, .page-link:hover {
+            color: #000;
+            background-color: #fafafa;
+            border-color: #ccc;
+        }
+    </style>
+</th:block>
+
+
+<div layout:fragment="content">
+    <h2 style="text-align: center; border-radius: 5px; padding: 10px;" class="bg-secondary text-white">
+        판매자 신청란
+    </h2>
+
+    <p>아이디 : <span th:text="${#authentication.principal.id}"></span></p>
+    <p>이름   : <span th:text="${#authentication.principal.username}"></span></p>
+    <p>닉네임 : <span th:text="${#authentication.principal.nickName}"></span></p>
+    <p>주소   : <span th:text="${#authentication.principal.address}"></span></p>
+    <p>전화번호 : <span th:text="${#authentication.principal.phoneNum}"></span></p>
+    <p>이메일  : <span th:text="${#authentication.principal.email}"></span></p>
+    <div class="button-wrapper">
+        <button type="button" th:attr="onclick='signUpSeller(\'' + ${#authentication.principal.idx} + '\')'"
+                class="button-delete btn btn-dark">판매자 신청하기
+        </button>
+    </div>
+
+</div>
+
+
+</html>
+
+
+
+
+
+

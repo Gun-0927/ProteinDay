@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>layout</title>
+  <!-- CSS only -->
+  <link rel="stylesheet" href="css/boot.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+<!--  Chart.js 라이브러리 추가-->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!--드랍다운 버튼-->
+  <style>
+    .dropdown-menu {
+      display: none;
+    }
+
+    .nav-item.dropdown:hover .dropdown-menu {
+      display: block;
+    }
+
+    .container>div {
+      border: 0.5px solid black;
+    }
+
+    .container-fluid div {
+      border: 0.5px solid black;
+    }
+
+    .container-fluid>div {
+      border: 0.5px solid black;
+    }
+
+    .side_menu {
+      margin: 5px 0px 5px 0px;
+    }
+  </style>
+
+  <script th:inline="javascript">
+  window.onload = function() {
+    /*<![CDATA[*/
+
+    var userMainDtos = /*[[${userMainDtos}]]*/ 'default'; // 데이터 받아오기
+
+    // 데이터 변환
+    var labels = userMainDtos.map(function(e) {
+        return e.logTime;
+    });
+    var bmiData = userMainDtos.map(function(e) {
+        return e.userGraphBmi;
+    });
+    var weightData = userMainDtos.map(function(e) {
+        return e.userGraphWeight;
+    });
+    var intakeCalData = userMainDtos.map(function(e) {
+        return e.userGraphIntakeCal;
+    });
+    var subtractCalData = userMainDtos.map(function(e) {
+        return e.userGraphSubtractCal;
+    });
+
+    // BMI 그래프
+    var ctxBmi = document.getElementById('bmiChart').getContext('2d');
+    new Chart(ctxBmi, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'BMI',
+                data: bmiData,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        }
+    });
+
+    // Weight 그래프
+    var ctxWeight = document.getElementById('weightChart').getContext('2d');
+    new Chart(ctxWeight, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Weight',
+                data: weightData,
+                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+            }]
+        }
+    });
+
+    // Calorie 그래프
+    var ctxCalorie = document.getElementById('calorieChart').getContext('2d');
+    new Chart(ctxCalorie, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Intake Cal',
+                    data: intakeCalData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Subtract Cal',
+                    data: subtractCalData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }
+            ]
+        }
+    });
+
+
+    var userMainCategoryDtoList = /*[[${userMainCategoryDtoList}]]*/ 'default'; // 데이터 받아오기
+
+  var labels = [];
+  var datasets = [];
+  userMainCategoryDtoList.forEach(function (category) {
+    var categoryData = category.userMainLogDataDtoList.map(function (logData) {
+      return logData.categoryCount;
+    });
+    var times = category.userMainLogDataDtoList.map(function (logData) {
+      return logData.logTime;
+    });
+
+    if (labels.length < times.length) {
+      labels = times; // x 축에 사용될 라벨 설정
+    }
+
+    datasets.push({ // 각 카테고리에 대한 데이터 세트 추가
+      label: category.categoryName,
+      data: categoryData,
+      // 아래 컬러 코드를 각 카테고리별로 다르게 설정할 수 있습니다.
+      backgroundColor: 'rgba(0, 123, 255, 0.5)',
+      borderColor: 'rgba(0, 123, 255, 1)',
+      borderWidth: 1
+    });
+  });
+
+  var ctxCategory = document.getElementById('categoryChart').getContext('2d');
+  new Chart(ctxCategory, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: datasets
+    }
+  });
+
+    /*]]>*/
+}
+</script>
+
+</head>
+
+<body>
+<!-- 메인 부분 -->
+<div class="container-fluid " style="margin-top: 40px;" layout:fragment="content">
+  <div class="row gx-0">
+    <div class="row">
+      <div class="col-md-4 text-center h3">
+        마이페이지
+      </div>
+
+    </div>
+
+    <div class="col-10">
+      <div class="container-fluid">
+
+        <div class="row">
+          <div class="col-12 text-center">
+            <br><br><br>
+            먼가 넣을수도 있는 공간 또는 디자인을 위한 공백
+            <br><br><br>
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="offset-5 col-2 text-center p-4 h3">
+            마이페이지 메인
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-6 text-center">
+            BMI 기록 그래프
+          </div>
+          <div class="col-6 text-center">
+            체중 기록 그래프
+          </div>
+          <div class="col-6 text-center">
+            <canvas id="bmiChart"></canvas>
+          </div>
+          <div class="col-6 text-center">
+            <canvas id="weightChart"></canvas>
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-6 text-center">
+            칼로리 기록 그래프
+          </div>
+          <div class="col-6 text-center">
+            카테고리 조회수 기록 그래프
+          </div>
+          <div class="col-6 text-center">
+            <canvas id="calorieChart"></canvas>
+          </div>
+          <div class="col-6 text-center">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- 사이드메뉴 부분 -->
+    <div class="col-2">
+      <div th:replace="/userpage/userPageSide"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+
+</html>

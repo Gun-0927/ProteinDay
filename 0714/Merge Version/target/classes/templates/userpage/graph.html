@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>Graph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+<canvas id="categoryCountChart"></canvas>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+        var categoryLabels = /*[[${categoryLabels}]]*/ 'default';
+        var dateLabels = /*[[${dateLabels}]]*/ 'default';
+        var categoryCountData = /*[[${categoryCountData}]]*/ 'default';
+
+
+        var categoryCountCtx = document.getElementById('categoryCountChart').getContext('2d');
+        var categoryCountChart = new Chart(categoryCountCtx, {
+            type: 'line',
+            data: {
+                labels: dateLabels,
+                datasets: []
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // 데이터셋 추가
+        for (var i = 0; i < categoryLabels.length; i++) {
+            var dataset = {
+                label: categoryLabels[i],
+                data: categoryCountData[i],
+                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                borderColor: 'rgba(0, 123, 255, 1)',
+                borderWidth: 1,
+                fill: false
+            };
+
+            categoryCountChart.data.datasets.push(dataset);
+        }
+
+        categoryCountChart.update();
+        /*]]>*/
+    </script>
+</body>
+</html>

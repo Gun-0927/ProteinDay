@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!--<head>-->
+<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+<!--</head>-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+<style>
+    table {
+        width: 100%;
+    }
+    table, th, td {
+        border: 1px solid lightgray;
+        text-align: center;
+    }
+    td textarea {
+        width: 100%;
+        height: 100%;
+        resize: none;
+    }
+</style>
+<body>
+<form id="report" method="post"
+      th:action="@{/report/shop/inquiryAnswer/{inquiryAnswerId}(inquiryAnswerId=${inquiryAnswer.id})}">
+    <table>
+        <tr>
+            <td style="font-weight: bold; font-size: 130%;" colspan="4">문의 답변글 신고하기</td>
+        </tr>
+        <tr>
+            <td style="width: 20%">답변글 내용</td>
+            <td style="width: 40%"
+                th:text="${#strings.length(inquiryAnswer.content) > 20 ? #strings.substring(inquiryAnswer.content, 0, 20) + '...' : inquiryAnswer.content}"></td>
+            <td style="width: 20%">작성자 닉네임</td>
+            <td style="width: 20%" th:text="${inquiryAnswer.createdBy}"></td>
+        </tr>
+        <tr>
+            <td>신고 사유</td>
+            <td colspan="3">
+                <div>
+                    <input type="radio" name="reportCategory" id="reason1" value="욕설/비방">
+                    <label for="reason1">욕설/비방</label>
+                    <input type="radio" name="reportCategory" id="reason2" value="도배">
+                    <label for="reason2">도배</label>
+                    <input type="radio" name="reportCategory" id="reason3" value="홍보/상업성">
+                    <label for="reason3">홍보/상업성</label>
+                    <input type="radio" name="reportCategory" id="reason4" value="음란성">
+                    <label for="reason4">음란성</label>
+                    <input type="radio" name="reportCategory" id="reason5" value="불법내용">
+                    <label for="reason5">불법내용</label>
+                    <input type="radio" name="reportCategory" id="reason6" value="기타">
+                    <label for="reason6">기타</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>신고 내용</td>
+            <td colspan="3" style="height:360px;">
+                <textarea name="reportContent"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <button type="submit" class="btn btn-sm btn-dark">신고하기</button>
+                <button onclick="window.close()" class="btn btn-sm btn-dark">닫기</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+</body>
+</html>

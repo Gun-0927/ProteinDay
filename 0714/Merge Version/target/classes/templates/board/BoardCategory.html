@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .button-container {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .button-container button {
+        margin-right: 10px;
+    }
+</style>
+<script>
+    function submitForm(categoryId) {
+        var url = "/board/" + categoryId;
+        window.location.href = url;
+    }
+</script>
+<body>
+<h1>Board List</h1>
+<a href="/">돌아가기</a>
+
+
+<form method="get" action="/board">
+    <div class="button-container">
+        <button type="submit">전체보기</button>
+        <div th:each="category : ${categoryList}">
+            <button type="button" name="category" th:onclick="'submitForm(' + ${category.categoryId} + ')'">
+                <span th:text="${category.categoryName}"></span>
+            </button>
+        </div>
+    </div>
+</form>
+<table>
+    <thead>
+    <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>내용</th>
+        <th>좋아요</th>
+        <th>싫어요</th>
+        <th>신고</th>
+        <th>조회수</th>
+        <th>이전 조회수</th>
+        <th>작성 날짜</th>
+        <th>작성자</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- boardList 반복 출력 -->
+    <tr th:each="board : ${boardList}">
+        <td th:text="${board.boardId}"></td>
+        <td th:text="${board.boardTitle}"></td>
+        <td th:text="${board.boardContent}"></td>
+        <td th:text="${board.boardLikeCount}"></td>
+        <td th:text="${board.boardHateCount}"></td>
+        <td th:text="${board.boardReportsCount}"></td>
+        <td th:text="${board.boardCount}"></td>
+        <td th:text="${board.boardPreCount}"></td>
+        <td th:text="${board.boardTime}"></td>
+        <td th:text="${board.boardCreatedBy}"></td>
+    </tr>
+    </tbody>
+</table>
+<a href="/board/new">글 쓰기</a>
+</body>
+</html>

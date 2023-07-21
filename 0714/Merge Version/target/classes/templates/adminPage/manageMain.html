@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- 메인 부분 -->
+  <div class="container-fluid " style="margin-top: 40px;" layout:fragment="content">
+      <div class="row">
+        <div class="col-md-4 text-center h3">
+          관리자 메인화면
+        </div>
+      </div>
+
+      <div class="col-10">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-4 text-center">
+                  <div class="row">
+                    <div class="col-12 text-center">
+                      유저 통계
+                    </div>
+                  </div>
+    
+                  <div class="row" style="height: 400px;">
+                    <div class="col-12 text-center">
+                        <pre>
+유저 통계
+- 전체 유저 수
+- 구매유저 수
+- 판매유저 수
+                        </pre>
+                      </div>
+                  </div>
+                </div>
+    
+                <div class="col-8 text-center">
+                  <div class="row">
+                    <div class="col-12 text-center">
+                      커뮤니티 관련 통계
+                    </div>
+                  </div>
+
+                  <div class="row" style="height: 400px;">
+                    <div class="col-12 text-center">
+                        <canvas id="myChart" width="400" height="200"></canvas>
+                    </div>
+                      <script th:inline="javascript">
+                          console.log("hi");
+                          // 데이터 추출
+                          var categoryData = [];
+                          var viewsData = [];
+                          var boardCountData = [];
+
+                          /*[[${categoryDailyDataList}]].forEach(function(categoryDailyData) {
+                              categoryData.push(categoryDailyData.categoryName);
+                              console.log(categoryData);
+                              viewsData.push(categoryDailyData.dailyData[0].views);
+                              boardCountData.push(categoryDailyData.dailyData[0].boardCount);
+                          });*/
+
+                          /* Java 코드 내에서 JSON.stringify()를 사용하여 데이터를 JSON 형식으로 변환한 후,
+                             JavaScript 변수에 할당할 수도 있습니다.
+                          var categoryDataJson = /*[[${categoryDailyDataList}]]* / ;
+                          categoryData = JSON.parse(categoryDataJson).map(function(categoryDailyData) {
+                              return categoryDailyData.categoryName;
+                          });
+                          console.log(categoryData);
+                          viewsData = JSON.parse(categoryDataJson).map(function(categoryDailyData) {
+                              return categoryDailyData.dailyData[0].views;
+                          });
+                          boardCountData = JSON.parse(categoryDataJson).map(function(categoryDailyData) {
+                              return categoryDailyData.dailyData[0].boardCount;
+                          });*/
+
+                          // 차트 생성
+                          var ctx = document.getElementById('myChart').getContext('2d');
+                          var myChart = new Chart(ctx, {
+                              type: 'line',
+                              data: {
+                                  labels: categoryData,
+                                  datasets: [{
+                                      label: '전체 조회수',
+                                      data: viewsData,
+                                      backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                      borderColor: 'rgba(54, 162, 235, 1)',
+                                      borderWidth: 1
+                                  }, {
+                                      label: '전체 게시물 수',
+                                      data: boardCountData,
+                                      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                                      borderColor: 'rgba(255, 99, 132, 1)',
+                                      borderWidth: 1
+                                  }]
+                              },
+                              options: {
+                                  responsive: true,
+                                  scales: {
+                                      x: {
+                                          beginAtZero: true
+                                      },
+                                      y: {
+                                          beginAtZero: true,
+                                          precision: 0
+                                      }
+                                  }
+                              }
+                          });
+                      </script>
+
+                  </div>
+                </div>
+              </div>
+    
+    
+              <div class="row">
+                <div class="col-8 text-center">
+                  <div class="row">
+                    <div class="col-12 text-center">
+                      쇼핑몰 관련 통계
+                    </div>
+                  </div>
+    
+                  <div class="row" style="height: 400px;">
+                    <div class="col-12 text-center">
+                        <pre>쇼핑몰 통계
+- 카테고리 별 매출
+- 카테고리 별 상품수
+- 전체 상품수
+- 전체 매출
+                        </pre>
+                      </div>
+                  </div>
+                </div>
+    
+                <div class="col-4 text-center">
+                  <div class="row">
+                    <div class="col-12 text-center">
+                      신고 미처리 건수
+                    </div>
+                  </div>
+    
+                  <div class="row" style="height: 400px;">
+                    <div class="col-12 text-center">
+                        <pre>신고 미처리 통계
+- 게시물 신고 수
+- 댓글 신고 수
+- 상품 신고 수
+- 리뷰 신고 수
+                        </pre>
+                      </div>
+                  </div>
+                </div>
+
+              </div>
+
+
+
+
+
+        </div>
+
+
+
+
+      <!-- 사이드메뉴 부분 -->
+        <div th:replace="/fragments/admin_side"></div>
+    </div>
+  </div>
+</body>
+
+</html>

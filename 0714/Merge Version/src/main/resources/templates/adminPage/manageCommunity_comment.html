@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+
+<body>
+<!-- 메인 부분 -->
+<div class="container-fluid " style="margin-top: 40px;" layout:fragment="content">
+    <script th:inline="javascript">
+        $(document).ready(function (){
+            $('.openReportList').click(function(){
+                const id = $(this).val();
+                const url = '/admin/commentReport/' + id
+                window.open(url, '신고 목록', 'width=500,height=400,left=150,top=50');
+            });
+            $('#categoryId').change(function(){
+                const id = $(this).val();
+                const url = '/admin/commentMgt/0'+'?id='+ id;
+                location.href = url;
+            }) ;
+            var rowCnt = $("input[name='RowCheck']").length;
+            $('#allCheck').click(function () {
+                var chk_listArr = $("input[name='RowCheck']");
+                for (var i = 0; i < chk_listArr.length; i++) {
+                    chk_listArr[i].checked = this.checked;
+                }
+            });
+            $("input[name='RowCheck']").click(function () {
+                if ($("input[name='RowCheck']:checked").length === rowCnt) {
+                    $("input[name='allCheck']").prop('checked', true);
+                } else {
+                    $("input[name='allCheck']").prop('checked', false);
+                }
+            });
+            $('#deleteComment').click(function (){
+                const selectedIds = [];
+                $('input[name="RowCheck"]:checked').each(function () {
+                    selectedIds.push($(this).val());
+                });
+
+                if (selectedIds.length === 0) {
+                    alert('삭제할 댓글을 선택해주세요.');
+                    return;
+                }
+
+                const confirmation = confirm('정말로 선택한 댓글을 삭제하시겠습니까?');
+                if (confirmation) {
+                    console.log(selectedIds);
+                    $.ajax({
+                        url: '/admin/deleteComment',
+                        type: 'POST',
+                        data: JSON.stringify(selectedIds),
+                        contentType: 'application/json',
+                        success: function () {
+                            location.reload();
+                        },
+                        error: function (err) {
+                            alert('댓글 삭제에 실패했습니다.');
+                            console.log(err)
+                        }
+                    });
+                }
+            });
+        });
+        function searchBoard(){
+            page(0);
+        }
+        function page(page) {
+            var searchBy = $("#searchBy").val();
+            var searchQuery = $("#searchQuery").val();
+
+            var categoryId = $('#categoryId').val();
+            if (categoryId !== '0') {
+                location.href = "/admin/commentMgt/" + page + "?id=" + categoryId + "&" + "searchBy=" + searchBy
+                    + "&searchQuery=" + searchQuery;
+            } else {
+                location.href = "/admin/commentMgt/" + page + "?id=0&" + "searchBy=" + searchBy
+                    + "&searchQuery=" + searchQuery;
+            }
+        }
+    </script>
+        <div class="row">
+            <div class="col-4 text-center h3">
+                커뮤니티 관리
+            </div>
+        </div>
+        <div class="row">
+        <div class="col-10">
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <div th:replace="/admincommheader/header"></div>
+
+                        <div class="row" th:object="${searchDto}">
+                            <div class="col-md-2  text-center">
+                                <select class="form-select form-select-sm" aria-label=".form-select-sm example"
+                                        name="categoryId" id="categoryId">
+                                    <!--                <option value="" disabled selected hidden>선택해주세요</option>-->
+                                    <option value="0">전체선택</option>
+                                    <option th:each="category : ${categoryList}" th:value="${category.categoryId}" th:selected="${category.categoryId == id}"
+                                            th:text="${category.categoryName}"></option>
+                                </select>
+
+                            </div>
+                                <div class="col-md-2  text-center" >
+                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example"  th:field="*{searchBy}" >
+                                        <option value="createdBy">작성자</option>
+                                        <option value="commentContent">댓글내용</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-5  text-center">
+                                    <input type="text" class="form-control" placeholder="작성해주세용" th:field="*{searchQuery}"  onkeydown="if (event.keyCode === 13) searchBoard();"/>
+                                </div>
+                                <div class="col-md-1  text-center">
+                                    <button class="btn btn-outline-secondary" onclick="searchBoard()">검색</button>
+                                </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-1 text-center form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="allCheck" name="allCheck" />
+                                <label class="form-check-label" for="allCheck">
+                                    전체선택
+                                </label>
+                            </div>
+
+                            <div class="col-1 text-center">
+                                카테고리
+                            </div>
+                            <div class="col-1 text-center">
+                                게시물제목
+                            </div>
+                            <div class="col-3 text-center">
+                                댓글내용
+                            </div>
+                            <div class="col-1 text-center">
+                                작성자
+                            </div>
+                            <div class="col-1 text-center">
+                                작성일
+                            </div>
+                            <div class="col-1 text-center">
+                                추천수
+                            </div>
+                            <div class="col-1 text-center">
+                                비추천수
+                            </div>
+                            <div class="col-1 text-center">
+                                미처리 신고수
+                            </div>
+                            <div class="col-1 text-center">
+                                누적 신고수
+                            </div>
+
+                        </div>
+
+                        <div id="boardList" class="row" th:each="comment : ${commentDtos.getContent()}">
+                            <!-- 게시물 행 내용 -->
+                            <div class="col-1 text-center form-check d-flex align-items-center justify-content-center">
+                                <input class="form-check-input" type="checkbox" th:value="${comment.commentId}" id="RowCheck" name="RowCheck"/>
+                            </div>
+                            <div class="col-1 d-flex align-self-center justify-content-center">
+                                <span th:text="${comment.getBoard.category.categoryName}"></span>
+                            </div>
+                            <div class="col-1 d-flex align-self-center justify-content-center">
+                                <a th:href="'/board/Detail/' + ${comment.getBoard.boardId}" th:text="${comment.getBoard.boardTitle}" target="_blank"></a>
+                            </div>
+                            <div class="col-3 d-flex align-self-center justify-content-between" th:text="${comment.commentContent}">
+<!--                               <pre></pre>-->
+                            </div>
+
+                            <div class="col-1 d-flex align-self-center justify-content-center">
+                                <span th:text="${comment.createdBy}"></span>
+                            </div>
+                            <div class="col-1 d-flex align-self-center justify-content-center">
+                                <span th:text="${#temporals.format(comment.regTime, 'MM월 dd일 HH:mm:ss')}"></span>
+                            </div>
+                            <div class="col-1 d-flex align-self-center justify-content-center">
+                                <span th:text="${comment.commentLikeCount}"></span>
+                            </div>
+                            <div class="col-1 d-flex align-self-center justify-content-center">
+                                <span th:text="${comment.commentHateCount}"></span>
+                            </div>
+                            <div class="col-1 d-flex align-self-center justify-content-center">
+                                <button class="btn btn-link openReportList" th:value="${comment.commentId}">
+                                    (<span th:text="${comment.notReportCount}"></span>)
+                                </button>
+                            </div>
+                            <div class="col-1 d-flex align-items-center justify-content-center">
+                                <span th:text="${comment.commentReportsCount}"></span>
+                            </div>
+                        </div>
+                        <div class="row" th:if="${commentDtos.isEmpty()}">
+                            <div class="col-12 text-center">
+                                <p>해당 게시글이 존재하지 않습니다.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 text-center">
+                                <button class="btn btn-outline-secondary" id="deleteComment">선택삭제</button>
+                            </div>
+                        </div>
+                        <div class="row" >
+                            <div class="col-12 text-center">
+                                <div th:with="start=${(commentDtos.number/maxPage)*maxPage + 1}, end=(${(commentDtos.totalPages == 0) ? 1 : (start + (maxPage - 1) < commentDtos.totalPages ? start + (maxPage - 1) : commentDtos.totalPages)})" >
+                                    <ul class="pagination justify-content-center">
+
+                                        <li class="page-item" th:classappend="${commentDtos.first}?'disabled'">
+                                            <a th:onclick="'javascript:page(' + ${commentDtos.number - 1} + ')'" aria-label='Previous' class="page-link">
+                                                <span aria-hidden='true'>Previous</span>
+                                            </a>
+                                        </li>
+
+                                        <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${commentDtos.number eq page-1}?'active':''">
+                                            <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+                                        </li>
+
+                                        <li class="page-item" th:classappend="${commentDtos.last}?'disabled'">
+                                            <a th:onclick="'javascript:page(' + ${commentDtos.number + 1} + ')'" aria-label='Next' class="page-link">
+                                                <span aria-hidden='true'>Next</span>
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+        </div>
+
+
+
+        <!-- 사이드메뉴 부분 -->
+        <div th:replace="/fragments/admin_side"></div>
+
+    </div>
+</div>
+</div>
+</body>
+
+</html>

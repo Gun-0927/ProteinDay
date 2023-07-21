@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Board Report Result</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        .table-container {
+            margin-top: 20px;
+        }
+
+        .button-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        tr {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<h2>미처리 댓글 신고리스트</h2>
+<div class="table-container">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>
+                <input type="checkbox" id="selectAll" />
+            </th>
+            <th>신고 유형</th>
+            <th>신고자</th>
+            <th>신고 시간</th>
+            <div>
+                <th colspan="2">신고 내용</th>
+            </div>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="report : ${reportDtos}" th:if="${!report.reportStatus}">
+            <td>
+                <input type="checkbox" class="reportCheck" th:value="${report.reportId}"/>
+            </td>
+            <td th:text="${report.reportCategory}"></td>
+            <td th:text="${report.createdBy}"></td>
+            <td th:text="${#temporals.format(report.regTime, 'MM월 dd일 HH:mm:ss')}"></td>
+            <td colspan="2" th:text="${report.reportContent}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="button-container">
+    <button class="btn btn-primary" id="deleteBoard">확인</button>
+</div>
+<h2>처리완료 댓글 신고리스트</h2>
+<div class="table-container">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>신고 유형</th>
+            <th>신고자</th>
+            <th>신고 시간</th>
+            <div>
+                <th colspan="2">신고 내용</th>
+            </div>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="report : ${reportPageDto.reportList}">
+            <td th:text="${report.reportCategory}"></td>
+            <td th:text="${report.createdBy}"></td>
+            <td th:text="${#temporals.format(report.regTime, 'MM월 dd일 HH:mm:ss')}"></td>
+            <td colspan="2" th:text="${report.reportContent}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination  justify-content-center" th:if="${reportPageDto.totalPages > 1}">
+            <li class="page-item" th:classappend="${reportPageDto.currentPage == 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/commentReport/{commentId}(commentId=${commentId}, page=${reportPageDto.currentPage - 1})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, reportPageDto.totalPages)}" th:classappend="${pageNumber == reportPageDto.currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/admin/commentReport/{commentId}(commentId=${commentId}, page=${pageNumber})}" th:text="${pageNumber}"></a>
+            </li>
+            <li class="page-item" th:classappend="${reportPageDto.currentPage == reportPageDto.totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/commentReport/{commentId}(commentId=${commentId}, page=${reportPageDto.currentPage + 1})}">Next</a>
+            </li>
+            <li class="page-item" th:classappend="${reportPageDto.currentPage == reportPageDto.totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/commentReport/{commentId}(commentId=${commentId}, page=${reportPageDto.totalPages})}">Last</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    const commentId = [[${commentId}]];
+    const currentPage = [[${reportPageDto.currentPage}]];
+    $(document).ready(function() {
+        $("#selectAll").change(function() {
+            $(".reportCheck").prop('checked', this.checked);
+        });
+
+        $(".reportCheck").change(function() {
+            if ($(".reportCheck:checked").length === $(".reportCheck").length) {
+                $("#selectAll").prop('checked', true);
+            } else {
+                $("#selectAll").prop('checked', false);
+            }
+        });
+
+        $("#deleteBoard").click(function() {
+            const selectedIds = [];
+            $(".reportCheck:checked").each(function () {
+                selectedIds.push($(this).val());
+            });
+
+            if (selectedIds.length === 0) {
+                alert('선택하시고 눌러주세용.');
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/admin/confirmReports",
+                contentType: "application/json",
+                data: JSON.stringify(selectedIds),
+                // success: function (response) {
+                //     // 응답 처리
+                //     $(".reportCheck:checked").closest("tr").remove();
+                //     console.log("신고 읽음 처리가 완료되었습니다.");
+                //     location.reload();
+                //     // 추가적인 로직이 있다면 여기에 작성하세요.
+                // },
+                success: function (response) {
+                    // 이전에 있는 코드
+
+                    // 선택한 신고를 목록에서 제거합니다.
+                    $(".reportCheck:checked").closest("tr").remove();
+
+                    // 현재 페이지의 리스트 개수를 확인합니다.
+                    const listCount = $(".reportCheck").length;
+                    if (listCount === 0) {
+                        // 페이지 번호를 1 감소시킵니다.
+                        let pageNumber = currentPage - 1;
+
+                        // 페이지 번호가 0보다 작아진다면 1페이지를 보여줍니다.
+                        if (pageNumber < 1) {
+                            pageNumber = 1;
+                        }
+
+                        // 감소시킨 페이지 번호로 페이지를 다시 로드합니다.
+                        location.href = `/admin/commentReport/${commentId}?page=${pageNumber}`;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // 에러 처리
+                    console.error("신고 읽음 처리 중 오류가 발생했습니다.");
+                    // 추가적인 에러 처리 로직이 있다면 여기에 작성하세요.
+                }
+            });
+        });
+    });
+</script>
+</html>

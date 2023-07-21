@@ -1,0 +1,33 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div class="col-2">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12 text-center side_menu">
+        <a th:href="@{/admin/main}">관리자 메인</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 text-center side_menu">
+        <a th:href="@{/admin/userMgt/0?userState=0}">유저관리</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 text-center side_menu">
+        <a th:href="@{/admin/commMgt}">커뮤니티관리</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 text-center side_menu">
+        <a th:href="@{/admin/shopUserMgt/0}">쇼핑몰관리</a>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+</html>
